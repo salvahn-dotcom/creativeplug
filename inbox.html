@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreativePlug LTD — Event Management</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #eaf2fb;
+    --surface: #ffffff;
+    --surface2: #ddeef8;
+    --border: #b8d4e8;
+    --accent: #1a6fba;
+    --accent2: #e8670a;
+    --text: #0f2233;
+    --text2: #4a6a84;
+    --text3: #89aabf;
+    --success: #1a9e5c;
+    --warning: #c97a00;
+    --danger: #d93025;
+    --radius: 8px;
+    --font: 'Space Grotesk', sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* LAYOUT */
+  .app { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-mark {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .logo-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  nav { padding: 16px 12px; flex: 1; }
+
+  .nav-section {
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin: 16px 0 6px;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: var(--radius);
+    border: none;
+    background: none;
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: var(--accent); color: #000; }
+  .nav-btn .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px 28px;
+    max-width: 100%;
+  }
+
+  /* HEADER */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .page-sub {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 3px;
+    font-family: var(--mono);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    font-family: var(--mono);
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #d4e83d; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--text3); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: #fff; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-accent2 { background: var(--accent2); color: #fff; }
+
+  /* FORMS */
+  .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+
+  label { font-size: 11px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  input, select, textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  select option { background: var(--surface2); }
+
+  /* TAGS / BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .badge-green { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.3); }
+  .badge-red { background: rgba(248,113,113,0.15); color: var(--danger); border: 1px solid rgba(248,113,113,0.3); }
+  .badge-yellow { background: rgba(251,191,36,0.15); color: var(--warning); border: 1px solid rgba(251,191,36,0.3); }
+  .badge-accent { background: rgba(232,255,71,0.15); color: var(--accent); border: 1px solid rgba(232,255,71,0.3); }
+  .badge-blue { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+  .badge-orange { background: rgba(255,107,43,0.15); color: var(--accent2); border: 1px solid rgba(255,107,43,0.3); }
+
+  /* SKILL TAGS */
+  .skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    margin: 2px;
+  }
+
+  .skill-tag.has { border-color: rgba(74,222,128,0.4); color: var(--success); background: rgba(74,222,128,0.08); }
+  .skill-tag.no { border-color: rgba(248,113,113,0.3); color: var(--text3); background: transparent; text-decoration: line-through; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(42,42,42,0.6);
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 10px 12px; vertical-align: middle; }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* STATS ROW */
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* MODAL */
+  .modal-bg {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-bg.show { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .modal-title { font-size: 16px; font-weight: 700; }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .close-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* CHECKBOX GROUP */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.15s;
+    background: var(--surface2);
+  }
+
+  .checkbox-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); flex-shrink: 0; }
+  .checkbox-item:has(input:checked) { border-color: var(--accent); background: rgba(232,255,71,0.05); }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CALENDAR */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .cal-day-header {
+    text-align: center;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--text3);
+    padding: 4px 0 8px;
+    text-transform: uppercase;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 6px 4px 4px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.12s;
+    min-height: 48px;
+  }
+
+  .cal-day:hover { border-color: var(--border); background: var(--surface2); }
+  .cal-day.today { border-color: var(--accent); color: var(--accent); }
+  .cal-day.has-booking::after {
+    content: '';
+    display: block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent2);
+    margin-top: 3px;
+  }
+  .cal-day.empty { pointer-events: none; opacity: 0; }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .cal-month {
+    font-weight: 700;
+    font-size: 15px;
+    font-family: var(--mono);
+  }
+
+  /* QUOTE PREVIEW */
+  .quote-doc {
+    background: #fff;
+    color: #111;
+    border-radius: var(--radius);
+    padding: 32px;
+    font-family: var(--font);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .quote-doc h1 { font-size: 22px; color: #111; margin-bottom: 4px; }
+  .quote-doc .q-meta { font-size: 11px; color: #666; margin-bottom: 20px; font-family: var(--mono); }
+  .quote-doc .q-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+  .quote-doc .q-total { display: flex; justify-content: space-between; padding: 10px 0; font-weight: 700; font-size: 15px; border-top: 2px solid #111; margin-top: 4px; }
+  .quote-doc .q-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .quote-doc .q-from { font-size: 12px; color: #444; }
+  .quote-doc .q-from strong { display: block; font-size: 14px; color: #111; margin-bottom: 2px; }
+  .quote-doc .q-logo { font-family: var(--mono); font-size: 11px; color: #888; text-align: right; }
+  .quote-doc .q-logo strong { display: block; font-size: 16px; color: #111; }
+
+  /* AVAILABILITY INDICATOR */
+  .avail-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    flex-shrink: 0;
+  }
+  .avail-dot.green { background: var(--success); }
+  .avail-dot.red { background: var(--danger); }
+  .avail-dot.yellow { background: var(--warning); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+  /* SEARCH */
+  .search-bar {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .search-bar input { padding-left: 32px; }
+  .search-bar .search-icon {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  /* NOTIFICATION TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent);
+    color: #000;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 13px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* RESPONSIVE - Mobile bottom nav */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100% !important;
+      min-width: unset !important;
+      height: 64px;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      flex-direction: row;
+      border-right: none;
+      border-top: 2px solid var(--border);
+      z-index: 200;
+      overflow-x: auto;
+      overflow-y: hidden;
+      background: var(--surface);
+    }
+    .sidebar-logo { display: none; }
+    nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 4px;
+      flex: 1;
+      overflow-x: auto;
+      gap: 2px;
+    }
+    .nav-section { display: none; }
+    .nav-btn {
+      flex-direction: column;
+      gap: 2px;
+      padding: 6px 8px;
+      min-width: 52px;
+      border-radius: 8px;
+      white-space: nowrap;
+      color: var(--text2);
+    }
+    .nav-btn.active { background: var(--accent); color: #fff; }
+    .nav-btn .icon { font-size: 18px; width: auto; }
+    .nav-btn span { display: block; font-size: 9px; line-height: 1; }
+    .main {
+      margin-left: 0 !important;
+      margin-bottom: 72px;
+      padding: 16px 12px;
+    }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; gap: 10px; }
+    .modal { padding: 16px; max-width: 100%; }
+    .form-row { flex-direction: column; }
+    .tab-row { overflow-x: auto; flex-wrap: nowrap; }
+  }
+
+  .ical-note {
+    background: rgba(232,255,71,0.06);
+    border: 1px solid rgba(232,255,71,0.2);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  .ical-note strong { color: var(--accent); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  .empty-state .empty-icon { font-size: 32px; margin-bottom: 10px; }
+
+  .inline-flex { display: flex; align-items: center; gap: 8px; }
+  .ml-auto { margin-left: auto; }
+
+  .tab-row {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .tab-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    margin-bottom: 8px;
+  }
+
+  .item-row .item-name { font-weight: 600; font-size: 13px; flex: 1; }
+  .item-row .item-meta { font-size: 11px; color: var(--text2); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">⚡ CP</div>
+      <div class="logo-name">CreativePlug</div>
+      <div class="logo-sub">LTD</div>
+    </div>
+    <nav>
+      <div class="nav-section">Main</div>
+      <button class="nav-btn active" onclick="showSection('dashboard')">
+        <span class="icon">⬛</span><span>Dashboard</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('inventory')">
+        <span class="icon">📦</span><span>Inventory</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('technicians')">
+        <span class="icon">👷</span><span>Technicians</span>
+      </button>
+      <div class="nav-section">Bookings</div>
+      <button class="nav-btn" onclick="showSection('diary')">
+        <span class="icon">📅</span><span>Booking Diary</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('bookings')">
+        <span class="icon">📋</span><span>All Bookings</span>
+      </button>
+      <div class="nav-section">Finance</div>
+      <button class="nav-btn" onclick="showSection('quotes')">
+        <span class="icon">💷</span><span>Quotes</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('invoices')">
+        <span class="icon">🧾</span><span>Invoices</span>
+      </button>
+      <div class="nav-section">Tools</div>
+      <button class="nav-btn" onclick="showSection('requirements')">
+        <span class="icon">🎯</span><span>Requirements</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('reports')">
+        <span class="icon">📊</span><span>Reports</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('clients')">
+        <span class="icon">👥</span><span>Clients</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('availability')">
+        <span class="icon">🗓</span><span>Crew</span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="section active" id="sec-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Good day, CreativePlug ⚡</div>
+          <div class="page-sub">Here's your overview</div>
+        </div>
+        <button class="btn btn-primary" onclick="showSection('quotes'); setTimeout(()=>openNewQuote(),100)">+ New Quote</button>
+      </div>
+
+      <div class="grid3" style="margin-bottom:16px">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-inventory">0</div>
+          <div class="stat-label">Equipment Items</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-techs">0</div>
+          <div class="stat-label">Technicians</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-bookings">0</div>
+          <div class="stat-label">Active Bookings</div>
+        </div>
+      </div>
+      <div class="grid3" style="margin-bottom:20px">
+        <div class="stat-card" style="border-left:4px solid var(--success)">
+          <div class="stat-num" id="stat-earned" style="color:var(--success)">£0</div>
+          <div class="stat-label">Total Agreed Fees</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #333">
+          <div class="stat-num" id="stat-received">£0</div>
+          <div class="stat-label">Total Received</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid var(--danger)">
+          <div class="stat-num" id="stat-due" style="color:var(--danger)">£0</div>
+          <div class="stat-label">Outstanding</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Upcoming Bookings</div>
+          <div id="dash-bookings">
+            <div class="empty-state"><div class="empty-icon">📅</div>No bookings yet</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Recent Quotes</div>
+          <div id="dash-quotes">
+            <div class="empty-state"><div class="empty-icon">💷</div>No quotes yet</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section class="section" id="sec-inventory">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Equipment Inventory</div>
+          <div class="page-sub">All hire items & availability</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-item')">+ Add Item</button>
+      </div>
+
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search equipment…" oninput="filterInventory(this.value)">
+      </div>
+
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="filterCat('all',this)">All</button>
+        <button class="tab-btn" onclick="filterCat('audio',this)">Audio</button>
+        <button class="tab-btn" onclick="filterCat('lighting',this)">Lighting</button>
+        <button class="tab-btn" onclick="filterCat('video',this)">Video</button>
+        <button class="tab-btn" onclick="filterCat('staging',this)">Staging</button>
+        <button class="tab-btn" onclick="filterCat('power',this)">Power</button>
+        <button class="tab-btn" onclick="filterCat('other',this)">Other</button>
+      </div>
+
+      <div id="inventory-list"></div>
+    </section>
+
+    <!-- TECHNICIANS -->
+    <section class="section" id="sec-technicians">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Technicians</div>
+          <div class="page-sub">Skills, availability & rates</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-tech')">+ Add Technician</button>
+      </div>
+
+      <div id="tech-list"></div>
+    </section>
+
+    <!-- BOOKING DIARY -->
+    <section class="section" id="sec-diary">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Booking Diary</div>
+          <div class="page-sub">Calendar view of all jobs</div>
+        </div>
+        <button class="btn btn-primary" onclick="showSection('bookings'); setTimeout(()=>openModal('modal-add-booking'),100)">+ New Booking</button>
+      </div>
+
+      <div class="card">
+        <div class="cal-nav">
+          <button class="btn btn-secondary btn-sm" onclick="changeMonth(-1)">← Prev</button>
+          <span class="cal-month" id="cal-month-label"></span>
+          <button class="btn btn-secondary btn-sm" onclick="changeMonth(1)">Next →</button>
+        </div>
+        <div class="cal-grid" id="cal-days-header"></div>
+        <div class="cal-grid" id="cal-grid" style="margin-top:4px"></div>
+      </div>
+
+      <div class="ical-note">
+        <strong>📱 iCloud / Google Calendar Sync</strong><br>
+        To sync bookings: click any booking → "Export to .ics" to download a calendar event you can import into iCloud Calendar on iPhone or Mac. You can also add new bookings directly in Apple Calendar and reference this diary. <strong>Pro tip:</strong> Save this page to your iPhone Home Screen (Share → Add to Home Screen) for a native app feel.
+      </div>
+    </section>
+
+    <!-- ALL BOOKINGS -->
+    <section class="section" id="sec-bookings">
+      <div class="page-header">
+        <div>
+          <div class="page-title">All Bookings</div>
+          <div class="page-sub">Manage jobs</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-booking')">+ New Booking</button>
+      </div>
+      <div id="bookings-list"></div>
+    </section>
+
+    <!-- QUOTES -->
+    <section class="section" id="sec-quotes">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Quotes</div>
+          <div class="page-sub">Build & send quotes</div>
+        </div>
+        <button class="btn btn-primary" onclick="openNewQuote()">+ New Quote</button>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <div class="card" id="quote-builder">
+            <div class="card-title">Quote Builder</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Client Name</label>
+                <input id="q-client" type="text" placeholder="e.g. Acme Events Ltd">
+              </div>
+              <div class="form-group">
+                <label>Event Date</label>
+                <input id="q-date" type="date" onchange="refreshAvailForQuote()">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Event Name</label>
+                <input id="q-event" type="text" placeholder="e.g. Corporate Gala Night">
+              </div>
+              <div class="form-group">
+                <label>Venue</label>
+                <input id="q-venue" type="text" placeholder="e.g. The O2 Arena">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Notes for Client</label>
+                <textarea id="q-notes" placeholder="Any terms, conditions, or notes…"></textarea>
+              </div>
+            </div>
+
+            <hr class="divider">
+            <div class="card-title">Select Equipment</div>
+            <div id="q-equipment-list" style="max-height:200px;overflow-y:auto;margin-bottom:10px"></div>
+
+            <hr class="divider">
+            <div class="card-title">Select Technicians</div>
+            <div id="q-tech-list" style="max-height:180px;overflow-y:auto;margin-bottom:10px"></div>
+
+            <hr class="divider">
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+              <button class="btn btn-secondary" onclick="clearQuote()">Clear</button>
+              <button class="btn btn-primary" onclick="generateQuote()">Generate Quote →</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div id="quote-preview-wrap">
+            <div class="empty-state" style="padding:60px 20px">
+              <div class="empty-icon">📄</div>
+              Fill in the form and click "Generate Quote" to preview it here.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin:0 0 12px">Saved Quotes</div>
+      <div id="saved-quotes-list"></div>
+    </section>
+
+    <!-- INVOICES -->
+    <section class="section" id="sec-invoices">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Invoices</div>
+          <div class="page-sub">Convert quotes → invoices</div>
+        </div>
+      </div>
+
+      <!-- Invoice As Switcher -->
+      <div class="card" style="margin-bottom:16px;padding:16px 20px;border:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--text2);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Invoice As — select before creating an invoice:</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button id="inv-as-company" class="btn btn-primary" onclick="setInvoiceAs('company')">🏢 CreativePlug LTD</button>
+          <button id="inv-as-personal" class="btn btn-secondary" onclick="setInvoiceAs('personal')">👤 Nagif Salvah (Personal)</button>
+          <span id="inv-as-label" style="font-size:12px;color:var(--text2);margin-left:8px">Currently invoicing as: <strong style="color:var(--accent)">CreativePlug LTD</strong></span>
+        </div>
+      </div>
+
+      <div id="invoices-list">
+        <div class="empty-state"><div class="empty-icon">🧾</div>Save a quote first, then click “→ Invoice” to create one here.</div>
+      </div>
+    </section>
+
+    <!-- REQUIREMENTS / AI SUGGESTIONS -->
+    <section class="section" id="sec-requirements">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Customer Requirements</div>
+          <div class="page-sub">Input what client needs → see what you have available</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Event Brief</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Client Name</label>
+              <input id="r-client" type="text" placeholder="Client name">
+            </div>
+            <div class="form-group">
+              <label>Event Date</label>
+              <input id="r-date" type="date" onchange="checkReqAvail()">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Event Type</label>
+              <select id="r-type">
+                <option value="">Select type…</option>
+                <option>Corporate Conference</option>
+                <option>Wedding / Private Party</option>
+                <option>Concert / Live Music</option>
+                <option>Theatre / Performing Arts</option>
+                <option>Festival</option>
+                <option>Awards Ceremony</option>
+                <option>Product Launch</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Audience Size</label>
+              <select id="r-size">
+                <option value="">Select size…</option>
+                <option>Under 50</option>
+                <option>50–150</option>
+                <option>150–500</option>
+                <option>500–1000</option>
+                <option>1000+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label>What they need (describe freely)</label>
+            <textarea id="r-needs" placeholder="e.g. Need PA system, 2 moving lights on stage, someone who can operate sound, rigging for a 10m truss…" style="min-height:90px"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Budget (optional)</label>
+            <input id="r-budget" type="text" placeholder="e.g. £2,000">
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="analyseRequirements()">🔍 Analyse & Match</button>
+        </div>
+
+        <div>
+          <div class="card" id="req-results" style="display:none">
+            <div class="card-title">Availability & Suggestions</div>
+            <div id="req-results-inner"></div>
+          </div>
+          <div id="req-empty" class="empty-state" style="padding:60px 20px">
+            <div class="empty-icon">🎯</div>
+            Fill in the brief and click Analyse to see what you can offer.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="section" id="sec-reports">
+      <div class="page-header">
+        <div><div class="page-title">Monthly Reports</div>
+        <div class="page-sub">Shows, payments and dues</div></div>
+        <button class="btn btn-primary" onclick="generateReport()">Generate</button>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Report Period</div>
+        <div class="form-row" style="align-items:flex-end">
+          <div class="form-group">
+            <label>Period</label>
+            <select id="rpt-type" onchange="toggleReportType()">
+              <option value="month">Current Month</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div class="form-group" id="rpt-from-group" style="display:none">
+            <label>From</label>
+            <input id="rpt-from" type="month">
+          </div>
+          <div class="form-group" id="rpt-to-group" style="display:none">
+            <label>To</label>
+            <input id="rpt-to" type="month">
+          </div>
+          <button class="btn btn-primary" onclick="generateReport()">Generate</button>
+        </div>
+      </div>
+      <div id="report-output"><div class="empty-state"><div class="empty-icon">📊</div>Select a period and click Generate.</div></div>
+    </section>
+
+    <!-- CLIENTS -->
+    <section class="section" id="sec-clients">
+      <div class="page-header">
+        <div><div class="page-title">Client Database</div>
+        <div class="page-sub">Save client contact details</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-client')">+ Add Client</button>
+      </div>
+      <div id="clients-list"></div>
+    </section>
+
+    <!-- CREW AVAILABILITY -->
+    <section class="section" id="sec-availability">
+      <div class="page-header">
+        <div><div class="page-title">Crew Availability</div>
+        <div class="page-sub">See who is free on any date</div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="form-row" style="align-items:flex-end">
+          <div class="form-group">
+            <label>Check Date</label>
+            <input id="avail-date" type="date" onchange="checkCrewAvail()">
+          </div>
+          <button class="btn btn-primary" onclick="checkCrewAvail()">Check</button>
+        </div>
+      </div>
+      <div id="crew-avail-output"><div class="empty-state"><div class="empty-icon">🗓</div>Pick a date to see who is available.</div></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL: Invoice Edit -->
+<div class="modal-bg" id="modal-invoice-edit">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Edit Invoice Details</div>
+      <button class="close-btn" onclick="closeModal('modal-invoice-edit')">✕</button>
+    </div>
+    <input type="hidden" id="ie-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>PO Number</label>
+        <input id="ie-po" type="text" placeholder="e.g. 22-31707">
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input id="ie-duedate" type="text" placeholder="e.g. As soon as possible">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label>Client Address</label>
+      <textarea id="ie-client-address" placeholder="Client address (optional)" style="min-height:60px"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Amount Received (£)</label>
+        <input id="ie-received" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Notes / Special Instructions</label>
+      <textarea id="ie-notes" placeholder="e.g. No Service Charge Being Added…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-invoice-edit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInvoiceEdit()">Save & Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Booking -->
+<div class="modal-bg" id="modal-edit-booking">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div class="modal-title">Edit Booking</div>
+      <button class="close-btn" onclick="closeModal('modal-edit-booking')">✕</button>
+    </div>
+    <input type="hidden" id="eb-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client Name</label>
+        <input id="eb-client" type="text" placeholder="Client / Company">
+      </div>
+      <div class="form-group">
+        <label>Event Name</label>
+        <input id="eb-event" type="text" placeholder="Job / event name">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date From</label>
+        <input id="eb-from" type="date" onchange="refreshEditBookingAvail()">
+      </div>
+      <div class="form-group">
+        <label>Date To</label>
+        <input id="eb-to" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Venue</label>
+        <input id="eb-venue" type="text" placeholder="Venue name / address">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="eb-status">
+          <option>Confirmed</option>
+          <option>Provisional</option>
+          <option>Quote Sent</option>
+          <option>Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Equipment</label>
+      <div id="eb-equip-list" style="max-height:150px;overflow-y:auto;margin-top:6px"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Technicians</label>
+      <div id="eb-tech-list" style="max-height:140px;overflow-y:auto;margin-top:6px"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Agreed Fee (£)</label>
+        <input id="eb-fee" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Amount Received (£)</label>
+        <input id="eb-received" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Payment Status</label>
+      <select id="eb-payment">
+        <option value="unpaid">⏳ Payment Due</option>
+        <option value="partial">💰 Partially Paid</option>
+        <option value="paid">✅ All Clear — Paid in Full</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Notes</label>
+      <textarea id="eb-notes" placeholder="Any additional notes…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-booking')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditBooking()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Client -->
+<div class="modal-bg" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Client</div>
+      <button class="close-btn" onclick="closeModal('modal-add-client')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client / Company Name</label>
+        <input id="cl-name" type="text" placeholder="e.g. Pappu Events">
+      </div>
+      <div class="form-group">
+        <label>Contact Person</label>
+        <input id="cl-contact" type="text" placeholder="e.g. Mr Rahman">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone / WhatsApp</label>
+        <input id="cl-phone" type="tel" placeholder="07700 900000">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="cl-email" type="email" placeholder="client@email.com">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Notes</label>
+      <input id="cl-notes" type="text" placeholder="Any notes about this client">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-client')">Cancel</button>
+      <button class="btn btn-primary" onclick="addClient()">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL: Add Item -->
+<div class="modal-bg" id="modal-add-item">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Equipment Item</div>
+      <button class="close-btn" onclick="closeModal('modal-add-item')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Item Name</label>
+        <input id="item-name" type="text" placeholder="e.g. Shure SM58 Microphone">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="item-cat">
+          <option value="audio">Audio</option>
+          <option value="lighting">Lighting</option>
+          <option value="video">Video</option>
+          <option value="staging">Staging</option>
+          <option value="power">Power</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Quantity</label>
+        <input id="item-qty" type="number" placeholder="1" min="1" value="1">
+      </div>
+      <div class="form-group">
+        <label>Day Rate (£)</label>
+        <input id="item-rate" type="number" placeholder="0.00">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Notes / Spec</label>
+      <input id="item-notes" type="text" placeholder="e.g. Includes stand and cable">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-item')">Cancel</button>
+      <button class="btn btn-primary" onclick="addItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Technician -->
+<div class="modal-bg" id="modal-add-tech">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Technician</div>
+      <button class="close-btn" onclick="closeModal('modal-add-tech')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input id="tech-name" type="text" placeholder="e.g. John Smith">
+      </div>
+      <div class="form-group">
+        <label>Primary Role</label>
+        <select id="tech-role">
+          <option>Audio Technician</option>
+          <option>Lighting Technician</option>
+          <option>Video Technician</option>
+          <option>Stage Manager</option>
+          <option>Rigger</option>
+          <option>Stage Hand</option>
+          <option>Production Manager</option>
+          <option>General Technician</option>
+          <option>Musician</option>
+          <option>Singer</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Day Rate (£)</label>
+        <input id="tech-rate" type="number" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Contact / Email</label>
+        <input id="tech-contact" type="text" placeholder="email or phone">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:8px">
+      <label>Skills</label>
+      <div class="checkbox-grid" id="tech-skills-grid">
+        <label class="checkbox-item"><input type="checkbox" value="Audio"> Audio</label>
+        <label class="checkbox-item"><input type="checkbox" value="Video"> Video</label>
+        <label class="checkbox-item"><input type="checkbox" value="Lighting"> Lighting</label>
+        <label class="checkbox-item"><input type="checkbox" value="Rigging"> Rigging</label>
+        <label class="checkbox-item"><input type="checkbox" value="De-rig"> De-rig</label>
+        <label class="checkbox-item"><input type="checkbox" value="Stage Hand"> Stage Hand</label>
+        <label class="checkbox-item"><input type="checkbox" value="Can Drive"> Can Drive</label>
+        <label class="checkbox-item"><input type="checkbox" value="Stage Mgmt"> Stage Mgmt</label>
+        <label class="checkbox-item"><input type="checkbox" value="PA Op"> PA Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="LED Video"> LED Video</label>
+        <label class="checkbox-item"><input type="checkbox" value="Broadcast"> Broadcast</label>
+        <label class="checkbox-item"><input type="checkbox" value="Streaming"> Streaming</label>
+        <label class="checkbox-item"><input type="checkbox" value="Camera Op"> Camera Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="Vision Mix"> Vision Mix</label>
+        <label class="checkbox-item"><input type="checkbox" value="Analogue Desk SE"> Analogue Desk SE</label>
+        <label class="checkbox-item"><input type="checkbox" value="Digital Desk SE"> Digital Desk SE</label>
+        <label class="checkbox-item"><input type="checkbox" value="Resolume Op"> Resolume Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="Vmix Op"> Vmix Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="OBX Op"> OBX Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="Event Manager"> Event Manager</label>
+        <label class="checkbox-item"><input type="checkbox" value="Presenter"> Presenter</label>
+        <label class="checkbox-item" style="grid-column:1/-1;background:rgba(26,111,186,0.06);border-color:var(--accent);pointer-events:none;opacity:0.7;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent)">🎵 Musicians &amp; Singers</label>
+        <label class="checkbox-item"><input type="checkbox" value="Singing"> Singing</label>
+        <label class="checkbox-item"><input type="checkbox" value="Drums"> Drums</label>
+        <label class="checkbox-item"><input type="checkbox" value="Octopad"> Octopad</label>
+        <label class="checkbox-item"><input type="checkbox" value="Keyboard"> Keyboard</label>
+        <label class="checkbox-item"><input type="checkbox" value="Guitar"> Guitar</label>
+        <label class="checkbox-item"><input type="checkbox" value="Bass Guitar"> Bass Guitar</label>
+        <label class="checkbox-item"><input type="checkbox" value="Tabla"> Tabla</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-tech')">Cancel</button>
+      <button class="btn btn-primary" onclick="addTech()">Add Technician</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Technician -->
+<div class="modal-bg" id="modal-edit-tech">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Edit Technician</div>
+      <button class="close-btn" onclick="closeModal('modal-edit-tech')">✕</button>
+    </div>
+    <input type="hidden" id="edit-tech-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input id="edit-tech-name" type="text">
+      </div>
+      <div class="form-group">
+        <label>Primary Role</label>
+        <select id="edit-tech-role">
+          <option>Audio Technician</option>
+          <option>Lighting Technician</option>
+          <option>Video Technician</option>
+          <option>Stage Manager</option>
+          <option>Rigger</option>
+          <option>Stage Hand</option>
+          <option>Production Manager</option>
+          <option>General Technician</option>
+          <option>Musician</option>
+          <option>Singer</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Day Rate (£)</label>
+        <input id="edit-tech-rate" type="number">
+      </div>
+      <div class="form-group">
+        <label>Contact / Email</label>
+        <input id="edit-tech-contact" type="text">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:8px">
+      <label>Skills</label>
+      <div class="checkbox-grid" id="edit-tech-skills-grid">
+        <label class="checkbox-item"><input type="checkbox" value="Audio"> Audio</label>
+        <label class="checkbox-item"><input type="checkbox" value="Video"> Video</label>
+        <label class="checkbox-item"><input type="checkbox" value="Lighting"> Lighting</label>
+        <label class="checkbox-item"><input type="checkbox" value="Rigging"> Rigging</label>
+        <label class="checkbox-item"><input type="checkbox" value="De-rig"> De-rig</label>
+        <label class="checkbox-item"><input type="checkbox" value="Stage Hand"> Stage Hand</label>
+        <label class="checkbox-item"><input type="checkbox" value="Can Drive"> Can Drive</label>
+        <label class="checkbox-item"><input type="checkbox" value="Stage Mgmt"> Stage Mgmt</label>
+        <label class="checkbox-item"><input type="checkbox" value="PA Op"> PA Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="LED Video"> LED Video</label>
+        <label class="checkbox-item"><input type="checkbox" value="Broadcast"> Broadcast</label>
+        <label class="checkbox-item"><input type="checkbox" value="Streaming"> Streaming</label>
+        <label class="checkbox-item"><input type="checkbox" value="Camera Op"> Camera Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="Vision Mix"> Vision Mix</label>
+        <label class="checkbox-item"><input type="checkbox" value="Analogue Desk SE"> Analogue Desk SE</label>
+        <label class="checkbox-item"><input type="checkbox" value="Digital Desk SE"> Digital Desk SE</label>
+        <label class="checkbox-item"><input type="checkbox" value="Resolume Op"> Resolume Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="Vmix Op"> Vmix Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="OBX Op"> OBX Op</label>
+        <label class="checkbox-item"><input type="checkbox" value="Event Manager"> Event Manager</label>
+        <label class="checkbox-item"><input type="checkbox" value="Presenter"> Presenter</label>
+        <label class="checkbox-item" style="grid-column:1/-1;background:rgba(26,111,186,0.06);border-color:var(--accent);pointer-events:none;opacity:0.7;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent)">🎵 Musicians &amp; Singers</label>
+        <label class="checkbox-item"><input type="checkbox" value="Singing"> Singing</label>
+        <label class="checkbox-item"><input type="checkbox" value="Drums"> Drums</label>
+        <label class="checkbox-item"><input type="checkbox" value="Octopad"> Octopad</label>
+        <label class="checkbox-item"><input type="checkbox" value="Keyboard"> Keyboard</label>
+        <label class="checkbox-item"><input type="checkbox" value="Guitar"> Guitar</label>
+        <label class="checkbox-item"><input type="checkbox" value="Bass Guitar"> Bass Guitar</label>
+        <label class="checkbox-item"><input type="checkbox" value="Tabla"> Tabla</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-tech')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditTech()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Booking -->
+<div class="modal-bg" id="modal-add-booking">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div class="modal-title">New Booking</div>
+      <button class="close-btn" onclick="closeModal('modal-add-booking')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client Name</label>
+        <input id="bk-client" type="text" placeholder="Client / Company">
+      </div>
+      <div class="form-group">
+        <label>Event Name</label>
+        <input id="bk-event" type="text" placeholder="Job / event name">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date From</label>
+        <input id="bk-from" type="date" onchange="refreshBookingAvail()">
+      </div>
+      <div class="form-group">
+        <label>Date To</label>
+        <input id="bk-to" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Venue</label>
+        <input id="bk-venue" type="text" placeholder="Venue name / address">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="bk-status">
+          <option>Confirmed</option>
+          <option>Provisional</option>
+          <option>Quote Sent</option>
+          <option>Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Equipment (select items available on chosen date)</label>
+      <div id="bk-equip-list" style="max-height:150px;overflow-y:auto;margin-top:6px"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Technicians (select those available on chosen date)</label>
+      <div id="bk-tech-list" style="max-height:140px;overflow-y:auto;margin-top:6px"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Agreed Fee (£)</label>
+        <input id="bk-fee" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Amount Received (£)</label>
+        <input id="bk-received" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Payment Status</label>
+      <select id="bk-payment">
+        <option value="unpaid">⏳ Payment Due</option>
+        <option value="partial">💰 Partially Paid</option>
+        <option value="paid">✅ All Clear — Paid in Full</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Notes</label>
+      <textarea id="bk-notes" placeholder="Any additional notes…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-booking')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBooking()">Save Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: View Booking -->
+<div class="modal-bg" id="modal-view-booking">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="vb-title"></div>
+      <button class="close-btn" onclick="closeModal('modal-view-booking')">✕</button>
+    </div>
+    <div id="vb-content"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" onclick="exportICS()">📅 Export .ics</button>
+      <button class="btn btn-primary" onclick="openEditBooking()">✏️ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteCurrentBooking()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========================
+// STATE
+// ========================
+let state = {
+  inventory: [],
+  technicians: [],
+  bookings: [],
+  quotes: [],
+  invoices: [],
+  clients: [],
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+  currentBookingId: null,
+  activeQuote: null
+};
+
+// SEED DATA
+// ========================
+// NAVIGATION
+// ========================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.remove('active');
+    const oc = b.getAttribute('onclick') || '';
+    if (oc.includes("'" + id + "'")) b.classList.add('active');
+  });
+  if (id === 'diary') renderCalendar();
+  if (id === 'dashboard') updateDashboard();
+  if (id === 'inventory') renderInventory();
+  if (id === 'technicians') renderTechs();
+  if (id === 'bookings') renderBookings();
+  if (id === 'quotes') renderQuoteSelectors();
+  if (id === 'invoices') renderInvoices();
+  if (id === 'clients') renderClients();
+}
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+function seedData() {
+  state.inventory = [
+    // Digital Desks
+    {id:1, name:'Allen & Heath SQ6 48in 25bus', cat:'audio', qty:1, rate:150, notes:'48 input 25 bus digital desk', booked:[]},
+    {id:2, name:'Allen & Heath AR2412 DSnake', cat:'audio', qty:1, rate:60, notes:'Stage box / DSnake expander', booked:[]},
+    // Backline
+    {id:3, name:'Little Mark Tube 800 with CAB', cat:'other', qty:1, rate:80, notes:'Bass amp head with matching cabinet', booked:[]},
+    {id:4, name:'Marshall JCM 50H', cat:'other', qty:1, rate:70, notes:'Guitar amp head 50W', booked:[]},
+    // Microphones
+    {id:5, name:'Sennheiser G4 In-Ear System', cat:'audio', qty:1, rate:55, notes:'Wireless in-ear monitor system', booked:[]},
+    {id:6, name:'Shure QLXD with Beta 58 Capsule', cat:'audio', qty:1, rate:65, notes:'Wireless handheld vocal mic system', booked:[]},
+    // Speakers
+    {id:7, name:'EV ELX200 18P Sub', cat:'audio', qty:2, rate:45, notes:'18 inch powered subwoofer', booked:[]},
+    {id:8, name:'Yamaha DXS15 MKii', cat:'audio', qty:2, rate:50, notes:'15 inch powered subwoofer', booked:[]},
+    {id:9, name:'Yamaha DBR15', cat:'audio', qty:4, rate:40, notes:'15 inch powered speaker', booked:[]},
+    {id:10, name:'Yamaha DBR12', cat:'audio', qty:2, rate:35, notes:'12 inch powered speaker', booked:[]},
+    {id:11, name:'QSC K12 1KW', cat:'audio', qty:1, rate:50, notes:'12 inch 1000W powered speaker', booked:[]},
+    {id:12, name:'JBL PRX515', cat:'audio', qty:4, rate:35, notes:'15 inch powered speaker', booked:[]},
+    {id:13, name:'EV JX5', cat:'audio', qty:2, rate:30, notes:'Passive speaker', booked:[]},
+    {id:14, name:'EV SX300', cat:'audio', qty:6, rate:25, notes:'Passive speaker', booked:[]},
+  ];
+
+  state.technicians = [
+    {id:1, name:'John Davies', role:'Audio Technician', rate:280, contact:'john@cp.com', skills:['Audio','Rigging','De-rig','Stage Hand','Can Drive','PA Op'], booked:[]},
+    {id:2, name:'Sarah Mills', role:'Lighting Technician', rate:260, contact:'sarah@cp.com', skills:['Lighting','Rigging','De-rig','Follow Spot','LED Video','Can Drive'], booked:[]},
+    {id:3, name:'Marcus Lee', role:'Video Technician', rate:300, contact:'marcus@cp.com', skills:['Video','LED Video','Lighting','Comms'], booked:[]},
+    {id:4, name:'Priya Sharma', role:'Stage Manager', rate:320, contact:'priya@cp.com', skills:['Stage Mgmt','Stage Hand','Comms','Can Drive','De-rig'], booked:[]},
+    {id:5, name:'Tom Walsh', role:'Rigger', rate:350, contact:'tom@cp.com', skills:['Rigging','De-rig','Stage Hand','Can Drive','Stage Mgmt'], booked:[]},
+  ];
+}
+
+// ========================
+// SUPABASE CONFIG
+// ========================
+// ========================
+// LOCAL STORAGE
+// ========================
+const PRESET_DATA = {"inventory": [{"id": 1, "cat": "audio", "qty": 1, "name": "Allen & Heath SQ6 48in 25bus", "rate": 150, "notes": "48 input 25 bus digital desk", "booked": []}, {"id": 2, "cat": "audio", "qty": 1, "name": "Allen & Heath AR2412 DSnake", "rate": 60, "notes": "Stage box / DSnake expander", "booked": []}, {"id": 3, "cat": "other", "qty": 1, "name": "Little Mark Tube 800 with CAB", "rate": 80, "notes": "Bass amp head with matching cabinet", "booked": []}, {"id": 4, "cat": "other", "qty": 1, "name": "Marshall JCM 50H", "rate": 70, "notes": "Guitar amp head 50W", "booked": []}, {"id": 5, "cat": "audio", "qty": 1, "name": "Sennheiser G4 In-Ear System", "rate": 55, "notes": "Wireless in-ear monitor system", "booked": []}, {"id": 6, "cat": "audio", "qty": 1, "name": "Shure QLXD with Beta 58 Capsule", "rate": 65, "notes": "Wireless handheld vocal mic system", "booked": []}, {"id": 7, "cat": "audio", "qty": 2, "name": "EV ELX200 18P Sub", "rate": 45, "notes": "18 inch powered subwoofer", "booked": []}, {"id": 8, "cat": "audio", "qty": 2, "name": "Yamaha DXS15 MKii", "rate": 50, "notes": "15 inch powered subwoofer", "booked": []}, {"id": 9, "cat": "audio", "qty": 4, "name": "Yamaha DBR15", "rate": 40, "notes": "15 inch powered speaker", "booked": []}, {"id": 10, "cat": "audio", "qty": 2, "name": "Yamaha DBR12", "rate": 35, "notes": "12 inch powered speaker", "booked": []}, {"id": 11, "cat": "audio", "qty": 1, "name": "QSC K12 1KW", "rate": 50, "notes": "12 inch 1000W powered speaker", "booked": []}, {"id": 12, "cat": "audio", "qty": 4, "name": "JBL PRX515", "rate": 35, "notes": "15 inch powered speaker", "booked": []}, {"id": 13, "cat": "audio", "qty": 2, "name": "EV JX5", "rate": 30, "notes": "Passive speaker", "booked": []}, {"id": 14, "cat": "audio", "qty": 6, "name": "EV SX300", "rate": 25, "notes": "Passive speaker", "booked": []}], "technicians": [{"id": 1783165824790, "name": "Issa Khan Rashed", "rate": 200, "role": "Video Technician", "booked": [], "skills": ["Video", "Rigging", "De-rig", "Can Drive", "LED Video", "Broadcast", "Streaming", "Camera Op", "Vision Mix", "Resolume Op", "Vmix Op", "OBX Op"], "contact": ""}, {"id": 1783165861326, "name": "Nagif", "rate": 200, "role": "Audio Technician", "booked": [], "skills": ["Audio", "Video", "Rigging", "De-rig", "Stage Hand", "Stage Mgmt", "PA Op", "LED Video", "Broadcast", "Streaming", "Analogue Desk SE", "Digital Desk SE", "Resolume Op", "OBX Op", "Event Manager", "Guitar"], "contact": ""}, {"id": 1783165884844, "name": "Tanim", "rate": 100, "role": "Audio Technician", "booked": [], "skills": ["Audio", "Rigging", "De-rig", "Stage Hand", "Analogue Desk SE", "Drums", "Octopad", "Keyboard", "Guitar", "Bass Guitar"], "contact": ""}, {"id": 1783165918263, "name": "Samsul Zaki Shopon", "rate": 200, "role": "Audio Technician", "booked": [], "skills": ["Audio", "Rigging", "De-rig", "Stage Hand", "Can Drive", "Stage Mgmt", "PA Op", "Analogue Desk SE", "Event Manager", "Presenter"], "contact": ""}, {"id": 1783165948966, "name": "Riyed", "rate": 100, "role": "Audio Technician", "booked": [], "skills": ["Audio", "Rigging", "De-rig", "Stage Hand", "Stage Mgmt", "PA Op", "Analogue Desk SE", "Octopad", "Keyboard", "Guitar"], "contact": ""}, {"id": 1783166601527, "name": "Jibon", "rate": 100, "role": "Musician", "booked": [], "skills": ["Audio", "Rigging", "De-rig", "Can Drive", "Analogue Desk SE", "Singing", "Guitar"], "contact": ""}, {"id": 1783166662720, "name": "Amith Dey", "rate": 120, "role": "Musician", "booked": [], "skills": ["Singing", "Keyboard"], "contact": ""}, {"id": 1783166696056, "name": "Omi Islam", "rate": 100, "role": "Musician", "booked": [], "skills": ["Audio", "Rigging", "De-rig", "PA Op", "Analogue Desk SE", "Octopad", "Keyboard", "Guitar", "Bass Guitar"], "contact": ""}, {"id": 1783166728362, "name": "Tawki", "rate": 100, "role": "Musician", "booked": [], "skills": ["Audio", "Rigging", "De-rig", "Stage Hand", "Analogue Desk SE", "Drums", "Octopad"], "contact": ""}], "bookings": [{"id": 1783167393495, "to": "2026-07-04", "from": "2026-07-04", "event": "Pappu", "notes": "VMIX", "venue": "Dartford", "client": "Pappu", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783166003652, "to": "2026-07-10", "from": "2026-07-10", "event": "UKMC", "notes": "Musician", "venue": "Manchester", "client": "Pritom Ahmed", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783166090326, "to": "2026-07-12", "from": "2026-07-12", "event": "Camden Mela 2026", "notes": "Musician", "venue": "Camden", "client": "Pappu", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783786568377, "to": "2026-07-13", "from": "2026-07-13", "event": "Hybrid", "notes": "Streaming and sound", "venue": "Oxfordshire", "client": "Chatroleague", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783166146546, "to": "2026-07-25", "from": "2026-07-25", "event": "DR Association", "notes": "Audio Eng", "venue": "City Pavelion", "client": "Shopon Bhai", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783166420581, "to": "2026-07-26", "from": "2026-07-26", "event": "Dartford", "notes": "Musician", "venue": "Dartford", "client": "Pappu", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1784202952083, "to": "2026-08-05", "from": "2026-08-05", "event": "Ameer Bhai show", "notes": "Ameer bhai solo show", "venue": "Brady Art", "client": "Tanpura", "status": "Confirmed", "equipment": [], "technicians": [], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783858042184, "to": "2026-08-16", "from": "2026-08-16", "event": "Band fest", "notes": "Playing with Band", "venue": "Brady Art Centre", "client": "Sayeed", "status": "Provisional", "equipment": [], "technicians": [], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783166330776, "to": "2026-08-30", "from": "2026-08-30", "event": "Unknown Show", "notes": "Musician", "venue": "Unknown", "client": "Pappu", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783167147850, "to": "2026-09-12", "from": "2026-09-12", "event": "Agun n Shompa Dewan", "notes": "Musician", "venue": "MayFair", "client": "Shompa Dewan", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783167202560, "to": "2026-09-19", "from": "2026-09-19", "event": "Pritom Shaha", "notes": "Musician", "venue": "London", "client": "Pritom", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783167255498, "to": "2026-09-20", "from": "2026-09-20", "event": "Shopon bhai show", "notes": "Musician", "venue": "London", "client": "Shopon Bhai", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1783167323238, "to": "2026-10-31", "from": "2026-10-31", "event": "Shopon Bhai October", "notes": "Sound", "venue": "London", "client": "Shopon Bhai", "status": "Confirmed", "equipment": [], "technicians": [1783165861326], "fee": 0, "received": 0, "paymentStatus": "unpaid"}, {"id": 1785596259478, "to": "2026-08-23", "from": "2026-08-23", "event": "Tanpura Show", "notes": "", "venue": "", "client": "Shopon bhai", "status": "Confirmed", "equipment": [], "technicians": [], "fee": 0, "received": 0, "paymentStatus": "unpaid"}], "quotes": [], "invoices": [], "clients": []};
+
+function saveState() {
+  try { localStorage.setItem('cp_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('cp_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state.inventory = parsed.inventory || [];
+      state.technicians = parsed.technicians || [];
+      state.bookings = parsed.bookings || [];
+      state.quotes = parsed.quotes || [];
+      state.invoices = parsed.invoices || [];
+      state.clients = parsed.clients || [];
+    } else {
+      state.inventory = JSON.parse(JSON.stringify(PRESET_DATA.inventory));
+      state.technicians = JSON.parse(JSON.stringify(PRESET_DATA.technicians));
+      state.bookings = JSON.parse(JSON.stringify(PRESET_DATA.bookings));
+      state.quotes = [];
+      state.invoices = [];
+      state.clients = [];
+      saveState();
+    }
+  } catch(e) {
+    state.inventory = JSON.parse(JSON.stringify(PRESET_DATA.inventory));
+    state.technicians = JSON.parse(JSON.stringify(PRESET_DATA.technicians));
+    state.bookings = JSON.parse(JSON.stringify(PRESET_DATA.bookings));
+    state.quotes = [];
+    state.invoices = [];
+    state.clients = [];
+  }
+}
+
+// ========================
+// INVENTORY
+// ========================
+let invFilter = 'all', invSearch = '';
+
+function renderInventory() {
+  const list = document.getElementById('inventory-list');
+  let items = state.inventory.filter(i => {
+    const matchCat = invFilter === 'all' || i.cat === invFilter;
+    const matchSearch = i.name.toLowerCase().includes(invSearch.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div>No items found. Add some equipment to get started.</div>';
+    return;
+  }
+
+  list.innerHTML = items.map(item => `
+    <div class="item-row">
+      <div>
+        <div class="item-name">${item.name}</div>
+        <div class="item-meta">${item.notes || ''}</div>
+      </div>
+      <span class="badge badge-${catColor(item.cat)}">${item.cat}</span>
+      <span class="badge badge-blue">Qty: ${item.qty}</span>
+      <span class="badge badge-accent">£${item.rate}/day</span>
+      <button class="btn btn-secondary btn-sm" onclick="toggleItemAvail(${item.id})">${item.booked.includes('unavailable') ? '🔴 Mark Available' : '✅ Mark Unavailable'}</button>
+      <button class="btn btn-danger btn-sm" onclick="removeItem(${item.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function catColor(cat) {
+  return {audio:'orange',lighting:'yellow',video:'blue',staging:'accent',power:'green',other:'blue'}[cat]||'blue';
+}
+
+function filterInventory(v) { invSearch = v; renderInventory(); }
+function filterCat(cat, btn) {
+  invFilter = cat;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderInventory();
+}
+
+function addItem() {
+  const name = document.getElementById('item-name').value.trim();
+  if (!name) { toast('⚠ Enter item name'); return; }
+  const newItem = {
+    id: Date.now(),
+    name,
+    cat: document.getElementById('item-cat').value,
+    qty: parseInt(document.getElementById('item-qty').value)||1,
+    rate: parseFloat(document.getElementById('item-rate').value)||0,
+    notes: document.getElementById('item-notes').value.trim(),
+    booked: []
+  };
+  state.inventory.push(newItem);
+  saveState();
+  closeModal('modal-add-item');
+  renderInventory();
+  updateStats();
+  toast('✅ Item added');
+  document.getElementById('item-name').value='';
+  document.getElementById('item-notes').value='';
+  document.getElementById('item-rate').value='';
+  document.getElementById('item-qty').value='1';
+}
+
+function removeItem(id) {
+  if (!confirm('Remove this item from inventory?')) return;
+  state.inventory = state.inventory.filter(i => i.id !== id);
+  saveState(); renderInventory(); updateStats();
+  toast('Removed');
+}
+
+function toggleItemAvail(id) {
+  const item = state.inventory.find(i => i.id === id);
+  if (!item) return;
+  if (item.booked.includes('unavailable')) item.booked = item.booked.filter(x => x !== 'unavailable');
+  else item.booked.push('unavailable');
+  saveState(); renderInventory();
+  toast(item.booked.includes('unavailable') ? '🔴 Marked as unavailable' : '✅ Marked as available');
+}
+
+// ========================
+// TECHNICIANS
+// ========================
+function renderTechs() {
+  const list = document.getElementById('tech-list');
+  if (!state.technicians.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">👷</div>No technicians yet.</div>';
+    return;
+  }
+  list.innerHTML = state.technicians.map(t => `
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:2px">${t.name}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${t.role} · £${t.rate}/day · ${t.contact||''}</div>
+          <div>${t.skills.map(s => `<span class="skill-tag has">✓ ${s}</span>`).join('')}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="openEditTech(${t.id})">✏️ Edit</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleTechAvail(${t.id})">${t.booked.includes('unavailable') ? '🔴 Unavailable' : '✅ Available'}</button>
+          <button class="btn btn-danger btn-sm" onclick="removeTech(${t.id})">✕</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addTech() {
+  const name = document.getElementById('tech-name').value.trim();
+  if (!name) { toast('⚠ Enter technician name'); return; }
+  const skills = Array.from(document.querySelectorAll('#tech-skills-grid input:checked')).map(cb => cb.value);
+  const newTech = {
+    id: Date.now(),
+    name,
+    role: document.getElementById('tech-role').value,
+    rate: parseFloat(document.getElementById('tech-rate').value)||0,
+    contact: document.getElementById('tech-contact').value.trim(),
+    skills,
+    booked: []
+  };
+  state.technicians.push(newTech);
+  saveState(); closeModal('modal-add-tech'); renderTechs(); updateStats();
+  toast('✅ Technician added');
+  document.getElementById('tech-name').value='';
+  document.getElementById('tech-contact').value='';
+  document.getElementById('tech-rate').value='';
+  document.querySelectorAll('#tech-skills-grid input').forEach(cb => cb.checked = false);
+}
+
+function removeTech(id) {
+  if (!confirm('Remove this technician?')) return;
+  state.technicians = state.technicians.filter(t => t.id !== id);
+  saveState(); renderTechs(); updateStats(); toast('Removed');
+}
+
+function openEditTech(id) {
+  const t = state.technicians.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('edit-tech-id').value = t.id;
+  document.getElementById('edit-tech-name').value = t.name;
+  document.getElementById('edit-tech-rate').value = t.rate;
+  document.getElementById('edit-tech-contact').value = t.contact || '';
+  document.getElementById('edit-tech-role').value = t.role;
+  document.querySelectorAll('#edit-tech-skills-grid input').forEach(cb => {
+    cb.checked = t.skills.includes(cb.value);
+  });
+  openModal('modal-edit-tech');
+}
+
+function saveEditTech() {
+  const id = parseInt(document.getElementById('edit-tech-id').value);
+  const t = state.technicians.find(x => x.id === id);
+  if (!t) return;
+  t.name = document.getElementById('edit-tech-name').value.trim();
+  t.role = document.getElementById('edit-tech-role').value;
+  t.rate = parseFloat(document.getElementById('edit-tech-rate').value) || 0;
+  t.contact = document.getElementById('edit-tech-contact').value.trim();
+  t.skills = Array.from(document.querySelectorAll('#edit-tech-skills-grid input:checked')).map(cb => cb.value);
+  saveState();
+  closeModal('modal-edit-tech');
+  renderTechs();
+  toast('✅ Technician updated');
+}
+
+function toggleTechAvail(id) {
+  const tech = state.technicians.find(t => t.id === id);
+  if (!tech) return;
+  if (tech.booked.includes('unavailable')) tech.booked = tech.booked.filter(x => x !== 'unavailable');
+  else tech.booked.push('unavailable');
+  saveState(); renderTechs();
+  toast(tech.booked.includes('unavailable') ? '🔴 Marked unavailable' : '✅ Marked available');
+}
+
+// ========================
+// AVAILABILITY CHECK
+// ========================
+function isItemAvailableOn(item, dateStr) {
+  if (item.booked.includes('unavailable')) return false;
+  return !state.bookings.some(b => b.equipment && b.equipment.includes(item.id) && dateInRange(dateStr, b.from, b.to));
+}
+
+function isTechAvailableOn(tech, dateStr) {
+  if (tech.booked.includes('unavailable')) return false;
+  return !state.bookings.some(b => b.technicians && b.technicians.includes(tech.id) && dateInRange(dateStr, b.from, b.to));
+}
+
+function dateInRange(date, from, to) {
+  if (!from) return false;
+  const d = new Date(date), f = new Date(from), t = to ? new Date(to) : f;
+  return d >= f && d <= t;
+}
+
+// ========================
+// BOOKINGS
+// ========================
+function refreshBookingAvail() {
+  const date = document.getElementById('bk-from').value;
+  const equipDiv = document.getElementById('bk-equip-list');
+  const techDiv = document.getElementById('bk-tech-list');
+
+  equipDiv.innerHTML = state.inventory.map(item => {
+    const avail = !date || isItemAvailableOn(item, date);
+    return `<label class="checkbox-item" style="${!avail?'opacity:0.4;pointer-events:none':''}">
+      <input type="checkbox" name="bk-eq" value="${item.id}" ${!avail?'disabled':''}>
+      <span>${item.name}</span>
+      <span class="badge ${avail?'badge-green':'badge-red'}" style="margin-left:auto">${avail?'Available':'Booked'}</span>
+    </label>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px">No equipment in inventory yet</div>';
+
+  techDiv.innerHTML = state.technicians.map(t => {
+    const avail = !date || isTechAvailableOn(t, date);
+    return `<label class="checkbox-item" style="${!avail?'opacity:0.4;pointer-events:none':''}">
+      <input type="checkbox" name="bk-tech" value="${t.id}" ${!avail?'disabled':''}>
+      <span>${t.name} <small style="color:var(--text2)">(${t.role})</small></span>
+      <span class="badge ${avail?'badge-green':'badge-red'}" style="margin-left:auto">${avail?'Available':'Booked'}</span>
+    </label>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px">No technicians yet</div>';
+}
+
+function saveBooking() {
+  const client = document.getElementById('bk-client').value.trim();
+  const eventName = document.getElementById('bk-event').value.trim();
+  const from = document.getElementById('bk-from').value;
+  if (!client || !from) { toast('⚠ Client and date are required'); return; }
+
+  const equipment = Array.from(document.querySelectorAll('input[name="bk-eq"]:checked')).map(cb => parseInt(cb.value));
+  const technicians = Array.from(document.querySelectorAll('input[name="bk-tech"]:checked')).map(cb => parseInt(cb.value));
+
+  const booking = {
+    id: Date.now(),
+    client,
+    event: eventName,
+    from,
+    to: document.getElementById('bk-to').value || from,
+    venue: document.getElementById('bk-venue').value.trim(),
+    status: document.getElementById('bk-status').value,
+    equipment,
+    technicians,
+    notes: document.getElementById('bk-notes').value.trim(),
+    fee: parseFloat(document.getElementById('bk-fee').value) || 0,
+    received: parseFloat(document.getElementById('bk-received').value) || 0,
+    paymentStatus: document.getElementById('bk-payment').value
+  };
+
+  state.bookings.push(booking);
+  saveState();
+  closeModal('modal-add-booking');
+  renderBookings();
+  renderCalendar();
+  updateDashboard();
+  toast('✅ Booking saved');
+}
+
+function renderBookings() {
+  const list = document.getElementById('bookings-list');
+  if (!state.bookings.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>No bookings yet. Click "+ New Booking" to add one.</div>';
+    return;
+  }
+  list.innerHTML = state.bookings.sort((a,b)=>a.from.localeCompare(b.from)).map(b => {
+    const statusColor = {Confirmed:'green',Provisional:'yellow','Quote Sent':'blue',Cancelled:'red'}[b.status]||'blue';
+    const eqNames = b.equipment.map(id => { const i=state.inventory.find(x=>x.id===id); return i?i.name:'?'; }).join(', ')||'None';
+    const techNames = b.technicians.map(id => { const t=state.technicians.find(x=>x.id===id); return t?t.name:'?'; }).join(', ')||'None';
+    const payColor = {paid:'badge-green',partial:'badge-yellow',unpaid:'badge-red'}[b.paymentStatus||'unpaid'];
+    const payLabel = {paid:'Paid',partial:'Part Paid',unpaid:'Due'}[b.paymentStatus||'unpaid'];
+    const due = Math.max(0,(b.fee||0)-(b.received||0));
+    return `<div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;cursor:pointer;min-width:120px" onclick="viewBooking(${b.id})">
+          <div style="font-weight:700">${b.event||b.client}</div>
+          <div style="font-size:12px;color:var(--text2)">${b.client} · ${b.from}${b.to && b.to!==b.from?' - '+b.to:''} · ${b.venue||'No venue'}</div>
+        </div>
+        <select onchange="quickStatusUpdate(${b.id}, this.value)" onclick="event.stopPropagation()" style="font-size:11px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font)">
+          <option value="Confirmed" ${b.status==='Confirmed'?'selected':''}>Confirmed</option>
+          <option value="Provisional" ${b.status==='Provisional'?'selected':''}>Provisional</option>
+          <option value="Quote Sent" ${b.status==='Quote Sent'?'selected':''}>Quote Sent</option>
+          <option value="Cancelled" ${b.status==='Cancelled'?'selected':''}>Cancelled</option>
+        </select>
+        <span class="badge ${payColor}">${payLabel}</span>
+        ${b.fee ? `<span style="font-family:var(--mono);font-size:12px;font-weight:700">£${(b.fee||0).toFixed(2)}${due>0?' (£'+due.toFixed(2)+' due)':''}</span>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="duplicateBooking(${b.id})" style="flex-shrink:0">Copy</button>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text3)">Equipment: ${eqNames} | Crew: ${techNames}</div>
+    </div>`;
+  }).join('');
+}
+
+function viewBooking(id) {
+  const b = state.bookings.find(x => x.id === id);
+  if (!b) return;
+  state.currentBookingId = id;
+  document.getElementById('vb-title').textContent = b.event || b.client;
+  const eqNames = b.equipment.map(id => { const i=state.inventory.find(x=>x.id===id); return i?i.name:'?'; });
+  const techNames = b.technicians.map(id => { const t=state.technicians.find(x=>x.id===id); return t?t.name+' ('+t.role+')':'?'; });
+  const statusColor = {Confirmed:'green',Provisional:'yellow','Quote Sent':'blue',Cancelled:'red'}[b.status]||'blue';
+  document.getElementById('vb-content').innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <span class="badge badge-${statusColor}">${b.status}</span>
+      <span class="badge badge-accent">${b.from}${b.to && b.to!==b.from?' → '+b.to:''}</span>
+    </div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Client:</strong> ${b.client}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Venue:</strong> ${b.venue||'—'}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Agreed Fee:</strong> ${b.fee?'£'+(b.fee||0).toFixed(2):'Not set'}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Received:</strong> £${(b.received||0).toFixed(2)}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Balance Due:</strong> <span style="color:${((b.fee||0)-(b.received||0))>0?'var(--danger)':'var(--success)'}">£${Math.max(0,(b.fee||0)-(b.received||0)).toFixed(2)}</span></div>
+    <div style="font-size:13px;margin-bottom:10px"><strong>Notes:</strong> ${b.notes||'—'}</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:4px">EQUIPMENT</div>
+    ${eqNames.length ? eqNames.map(n=>`<span class="badge badge-orange" style="margin:2px">${n}</span>`).join('') : '<span style="color:var(--text3);font-size:12px">None</span>'}
+    <div style="font-size:12px;color:var(--text2);margin-top:10px;margin-bottom:4px">TECHNICIANS</div>
+    ${techNames.length ? techNames.map(n=>`<span class="badge badge-blue" style="margin:2px">${n}</span>`).join('') : '<span style="color:var(--text3);font-size:12px">None</span>'}
+  `;
+  openModal('modal-view-booking');
+}
+
+function deleteCurrentBooking() {
+  if (!state.currentBookingId || !confirm('Delete this booking?')) return;
+  state.bookings = state.bookings.filter(b => b.id !== state.currentBookingId);
+  saveState(); closeModal('modal-view-booking'); renderBookings(); renderCalendar(); updateDashboard();
+  toast('Booking deleted');
+}
+
+function openEditBooking() {
+  const b = state.bookings.find(x => x.id === state.currentBookingId);
+  if (!b) return;
+  closeModal('modal-view-booking');
+
+  document.getElementById('eb-id').value = b.id;
+  document.getElementById('eb-client').value = b.client;
+  document.getElementById('eb-event').value = b.event || '';
+  document.getElementById('eb-from').value = b.from;
+  document.getElementById('eb-to').value = b.to || '';
+  document.getElementById('eb-venue').value = b.venue || '';
+  document.getElementById('eb-status').value = b.status;
+  document.getElementById('eb-notes').value = b.notes || '';
+  document.getElementById('eb-fee').value = b.fee || '';
+  document.getElementById('eb-received').value = b.received || '';
+  document.getElementById('eb-payment').value = b.paymentStatus || 'unpaid';
+
+  refreshEditBookingAvail(b);
+  openModal('modal-edit-booking');
+}
+
+function refreshEditBookingAvail(existingBooking) {
+  const date = document.getElementById('eb-from').value;
+  const currentId = parseInt(document.getElementById('eb-id').value);
+  const b = existingBooking || state.bookings.find(x => x.id === currentId);
+
+  const equipDiv = document.getElementById('eb-equip-list');
+  const techDiv = document.getElementById('eb-tech-list');
+
+  equipDiv.innerHTML = state.inventory.map(item => {
+    // Available if: not marked unavailable globally, AND not booked on another booking (ignore current booking)
+    const bookedElsewhere = state.bookings.some(bk =>
+      bk.id !== currentId &&
+      bk.equipment && bk.equipment.includes(item.id) &&
+      dateInRange(date, bk.from, bk.to)
+    );
+    const globalUnavail = item.booked.includes('unavailable');
+    const avail = !globalUnavail && !bookedElsewhere;
+    const checked = b && b.equipment && b.equipment.includes(item.id);
+    return `<label class="checkbox-item" style="${!avail && !checked ? 'opacity:0.45' : ''}">
+      <input type="checkbox" name="eb-eq" value="${item.id}" ${checked ? 'checked' : ''} ${!avail && !checked ? 'disabled' : ''}>
+      <span style="flex:1">${item.name}</span>
+      <span class="badge ${avail || checked ? 'badge-green' : 'badge-red'}" style="margin-left:auto">${avail || checked ? 'Available' : 'Booked'}</span>
+    </label>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px">No equipment in inventory</div>';
+
+  techDiv.innerHTML = state.technicians.map(t => {
+    const bookedElsewhere = state.bookings.some(bk =>
+      bk.id !== currentId &&
+      bk.technicians && bk.technicians.includes(t.id) &&
+      dateInRange(date, bk.from, bk.to)
+    );
+    const globalUnavail = t.booked.includes('unavailable');
+    const avail = !globalUnavail && !bookedElsewhere;
+    const checked = b && b.technicians && b.technicians.includes(t.id);
+    return `<label class="checkbox-item" style="${!avail && !checked ? 'opacity:0.45' : ''}">
+      <input type="checkbox" name="eb-tech" value="${t.id}" ${checked ? 'checked' : ''} ${!avail && !checked ? 'disabled' : ''}>
+      <span style="flex:1">${t.name} <small style="color:var(--text2)">(${t.role})</small></span>
+      <span class="badge ${avail || checked ? 'badge-green' : 'badge-red'}" style="margin-left:auto">${avail || checked ? 'Available' : 'Booked'}</span>
+    </label>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px">No technicians added yet</div>';
+}
+
+function saveEditBooking() {
+  const id = parseInt(document.getElementById('eb-id').value);
+  const b = state.bookings.find(x => x.id === id);
+  if (!b) return;
+
+  b.client = document.getElementById('eb-client').value.trim();
+  b.event = document.getElementById('eb-event').value.trim();
+  b.from = document.getElementById('eb-from').value;
+  b.to = document.getElementById('eb-to').value || b.from;
+  b.venue = document.getElementById('eb-venue').value.trim();
+  b.status = document.getElementById('eb-status').value;
+  b.notes = document.getElementById('eb-notes').value.trim();
+  b.fee = parseFloat(document.getElementById('eb-fee').value) || 0;
+  b.received = parseFloat(document.getElementById('eb-received').value) || 0;
+  b.paymentStatus = document.getElementById('eb-payment').value;
+  b.equipment = Array.from(document.querySelectorAll('input[name="eb-eq"]:checked')).map(cb => parseInt(cb.value));
+  b.technicians = Array.from(document.querySelectorAll('input[name="eb-tech"]:checked')).map(cb => parseInt(cb.value));
+
+  saveState();
+  closeModal('modal-edit-booking');
+  renderBookings();
+  renderCalendar();
+  updateDashboard();
+  toast('✅ Booking updated');
+}
+
+function exportICS() {
+  const b = state.bookings.find(x => x.id === state.currentBookingId);
+  if (!b) return;
+  const fmt = d => d.replace(/-/g,'')+'T090000';
+  const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//CreativePlug//EN\nBEGIN:VEVENT\nUID:${b.id}@creativeplug\nDTSTAMP:${fmt(new Date().toISOString().split('T')[0])}\nDTSTART:${fmt(b.from)}\nDTEND:${fmt(b.to||b.from)}\nSUMMARY:${b.event||b.client}\nLOCATION:${b.venue||''}\nDESCRIPTION:Client: ${b.client}\\nNotes: ${b.notes||''}\nEND:VEVENT\nEND:VCALENDAR`;
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${(b.event||b.client).replace(/\s+/g,'_')}.ics`;
+  a.click();
+  toast('📅 .ics downloaded — import into iCloud Calendar');
+}
+
+// ========================
+// CALENDAR
+// ========================
+function renderCalendar() {
+  const y = state.calYear, m = state.calMonth;
+  document.getElementById('cal-month-label').textContent = new Date(y,m,1).toLocaleString('default',{month:'long',year:'numeric'});
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  document.getElementById('cal-days-header').innerHTML = days.map(d=>`<div class="cal-day-header">${d}</div>`).join('');
+  const firstDay = new Date(y,m,1);
+  let startOffset = firstDay.getDay() - 1; if (startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const today = new Date().toISOString().split('T')[0];
+  let html = '';
+  for (let i=0;i<startOffset;i++) html += '<div class="cal-day empty"></div>';
+  for (let d=1;d<=daysInMonth;d++) {
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasBooking = state.bookings.some(b => dateInRange(dateStr, b.from, b.to));
+    const isToday = dateStr === today;
+    html += `<div class="cal-day ${isToday?'today':''} ${hasBooking?'has-booking':''}" onclick="calDayClick('${dateStr}')" title="${dateStr}">${d}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function changeMonth(dir) {
+  state.calMonth += dir;
+  if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+  if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+  renderCalendar();
+}
+
+function calDayClick(date) {
+  const bookings = state.bookings.filter(b => dateInRange(date, b.from, b.to));
+  if (!bookings.length) {
+    if (confirm(`No bookings on ${date}. Create one?`)) {
+      showSection('bookings');
+      setTimeout(() => { document.getElementById('bk-from').value = date; refreshBookingAvail(); openModal('modal-add-booking'); }, 100);
+    }
+  } else {
+    viewBooking(bookings[0].id);
+  }
+}
+
+// ========================
+// QUOTES
+// ========================
+function openNewQuote() { renderQuoteSelectors(); }
+
+function renderQuoteSelectors() {
+  const date = document.getElementById('q-date').value;
+  const eqDiv = document.getElementById('q-equipment-list');
+  const techDiv = document.getElementById('q-tech-list');
+
+  eqDiv.innerHTML = state.inventory.map(item => {
+    const avail = !date || isItemAvailableOn(item, date);
+    return `<div class="q-eq-row" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);margin-bottom:6px;${!avail?'opacity:0.45':''}">
+      <input type="checkbox" name="q-eq" value="${item.id}"
+        data-name="${item.name}" data-rate="${item.rate}" data-maxqty="${item.qty}"
+        ${!avail?'disabled':''}
+        onchange="toggleQtyInput(this)"
+        style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0">
+      <span style="flex:1;font-size:13px;font-weight:500">${item.name}</span>
+      <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">Stock: ${item.qty}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--accent)">£${item.rate}/unit</span>
+      <div style="display:flex;align-items:center;gap:4px">
+        <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em">Qty:</label>
+        <input type="number" class="q-eq-qty" data-id="${item.id}" min="1" max="${item.qty}" value="1"
+          disabled
+          style="width:52px;padding:4px 6px;font-size:12px;font-family:var(--mono);background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);text-align:center">
+      </div>
+      ${!avail?'<span class="badge badge-red">Booked</span>':''}
+    </div>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px;padding:8px">Add equipment to inventory first</div>';
+
+  techDiv.innerHTML = state.technicians.map(t => {
+    const avail = !date || isTechAvailableOn(t, date);
+    return `<label class="checkbox-item" style="${!avail?'opacity:0.45':''}">
+      <input type="checkbox" name="q-tech" value="${t.id}" data-name="${t.name}" data-rate="${t.rate}" data-role="${t.role}" ${!avail?'disabled':''}>
+      <span style="flex:1">${t.name} <small style="color:var(--text2)">(${t.role})</small></span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--accent)">£${t.rate}/day</span>
+      ${!avail?'<span class="badge badge-red">Booked</span>':''}
+    </label>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px;padding:8px">Add technicians first</div>';
+
+  renderSavedQuotes();
+}
+
+function refreshAvailForQuote() { renderQuoteSelectors(); }
+
+function toggleQtyInput(cb) {
+  // Enable/disable the qty spinner next to the checkbox
+  const row = cb.closest('.q-eq-row');
+  const qtyInput = row.querySelector('.q-eq-qty');
+  if (qtyInput) {
+    qtyInput.disabled = !cb.checked;
+    if (!cb.checked) qtyInput.value = 1;
+  }
+}
+
+function generateQuote() {
+  const client = document.getElementById('q-client').value.trim();
+  const date = document.getElementById('q-date').value;
+  const event = document.getElementById('q-event').value.trim();
+  const venue = document.getElementById('q-venue').value.trim();
+  const notes = document.getElementById('q-notes').value.trim();
+
+  if (!client) { toast('⚠ Enter client name'); return; }
+
+  const eqItems = Array.from(document.querySelectorAll('input[name="q-eq"]:checked')).map(cb => {
+    const row = cb.closest('.q-eq-row');
+    const qtyInput = row ? row.querySelector('.q-eq-qty') : null;
+    const qty = qtyInput ? Math.max(1, parseInt(qtyInput.value) || 1) : 1;
+    const unitRate = parseFloat(cb.dataset.rate);
+    return {
+      id: parseInt(cb.value),
+      name: cb.dataset.name,
+      qty,
+      unitRate,
+      rate: unitRate * qty  // total for this line
+    };
+  });
+
+  const techItems = Array.from(document.querySelectorAll('input[name="q-tech"]:checked')).map(cb => ({
+    id: parseInt(cb.value), name: cb.dataset.name, rate: parseFloat(cb.dataset.rate), role: cb.dataset.role, qty: 1, unitRate: parseFloat(cb.dataset.rate)
+  }));
+
+  const subtotal = eqItems.reduce((s,i)=>s+i.rate,0) + techItems.reduce((s,t)=>s+t.rate,0);
+  const vat = subtotal * 0.2;
+  const total = subtotal + vat;
+  const qNum = 'CPQ-' + Date.now().toString().slice(-6);
+  const today = new Date().toLocaleDateString('en-GB');
+
+  const quote = { id: Date.now(), num: qNum, client, date, event, venue, notes, equipment: eqItems, technicians: techItems, subtotal, vat, total, created: today, invoiced: false };
+  state.activeQuote = quote;
+
+  const html = `
+    <div class="quote-doc">
+      <div class="q-header">
+        <div class="q-from">
+          <strong>CreativePlug LTD</strong>
+          Event Equipment & Technician Hire<br>
+          info@creativeplug.co.uk
+        </div>
+        <div class="q-logo">
+          <div style="font-size:11px;color:#999">Quote Ref</div>
+          <strong>${qNum}</strong>
+          <div style="font-size:11px;color:#999;margin-top:4px">Issued ${today}</div>
+        </div>
+      </div>
+
+      <div style="background:#f5f5f5;border-radius:6px;padding:14px 16px;margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px">${client}</div>
+        <div style="font-size:12px;color:#555">${event||'Event'} · ${date||'Date TBC'} · ${venue||'Venue TBC'}</div>
+      </div>
+
+      ${eqItems.length ? `
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#999;margin-bottom:8px;letter-spacing:.06em">Services &amp; Equipment</div>
+        ${eqItems.map(i=>`<div class="q-line"><span>${i.name}${i.qty>1?' <span style=\"font-size:10px;color:#999\">(x'+i.qty+')</span>':''}</span></div>`).join('')}
+      ` : ''}
+
+      ${techItems.length ? `
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#999;margin:14px 0 8px;letter-spacing:.06em">Crew</div>
+        ${techItems.map(t=>`<div class="q-line"><span>${t.name} — ${t.role}</span></div>`).join('')}
+      ` : ''}
+
+      <div style="margin-top:20px;border-top:1px solid #eee;padding-top:14px">
+        <div class="q-line"><span>Subtotal (excl. VAT)</span><span>£${subtotal.toFixed(2)}</span></div>
+        <div class="q-line"><span>VAT (20%)</span><span>£${vat.toFixed(2)}</span></div>
+        <div class="q-total"><span>TOTAL (incl. VAT)</span><span>£${total.toFixed(2)}</span></div>
+      </div>
+
+      ${notes ? `<div style="margin-top:16px;font-size:11px;color:#666;border-top:1px solid #eee;padding-top:10px">${notes}</div>` : ''}
+
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button onclick="saveQuote()" style="background:#000;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px">💾 Save Quote</button>
+        <button onclick="printQuote()" style="background:#f0f0f0;color:#333;border:none;padding:8px 18px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px">🖨 Print / PDF</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('quote-preview-wrap').innerHTML = html;
+}
+
+function saveQuote() {
+  if (!state.activeQuote) return;
+  state.quotes.push({...state.activeQuote});
+  saveState();
+  renderSavedQuotes();
+  renderInvoices();
+  toast('✅ Quote saved — ' + state.activeQuote.num);
+}
+
+function printQuote() {
+  if (!state.activeQuote) return;
+  const q = state.activeQuote;
+  const w = window.open('','','width=800,height=700');
+  w.document.write(`<html><head><title>Quote ${q.num}</title><style>
+    body{font-family:Arial,sans-serif;padding:40px;color:#111;font-size:13px;line-height:1.6;}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;}
+    .from{font-size:12px;color:#444;}
+    .from strong{display:block;font-size:15px;color:#111;margin-bottom:2px;}
+    .ref{text-align:right;font-size:11px;color:#888;}
+    .ref strong{display:block;font-size:16px;color:#111;}
+    .client-block{background:#f5f5f5;border-radius:6px;padding:14px 16px;margin-bottom:24px;}
+    .section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999;margin:16px 0 8px;}
+    .item-row{padding:7px 0;border-bottom:1px solid #eee;font-size:13px;}
+    .totals{margin-top:20px;border-top:1px solid #ddd;padding-top:12px;}
+    .total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;}
+    .grand-total{display:flex;justify-content:space-between;font-weight:700;font-size:16px;padding:10px 0;border-top:2px solid #111;margin-top:6px;}
+    .notes{margin-top:20px;font-size:11px;color:#666;border-top:1px solid #eee;padding-top:12px;}
+    .footer{margin-top:40px;font-size:10px;color:#aaa;text-align:center;}
+  </style></head><body>`);
+  w.document.write(`
+    <div class="header">
+      <div class="from">
+        <strong>CreativePlug LTD</strong>
+        Event Equipment &amp; Technician Hire<br>
+        info@creativeplug.co.uk
+      </div>
+      <div class="ref">
+        <div>Quotation</div>
+        <strong>${q.num}</strong>
+        <div style="margin-top:4px">Issued: ${q.created}</div>
+      </div>
+    </div>
+    <div class="client-block">
+      <strong style="font-size:15px">${q.client}</strong><br>
+      <span style="font-size:12px;color:#555">${q.event||'Event'} &nbsp;·&nbsp; ${q.date||'Date TBC'} &nbsp;·&nbsp; ${q.venue||'Venue TBC'}</span>
+    </div>
+  `);
+  if (q.equipment.length) {
+    w.document.write(`<div class="section-label">Services &amp; Equipment</div>`);
+    q.equipment.forEach(e => w.document.write(`<div class="item-row">${e.name}${e.qty>1?' (x'+e.qty+')':''}</div>`));
+  }
+  if (q.technicians.length) {
+    w.document.write(`<div class="section-label">Crew</div>`);
+    q.technicians.forEach(t => w.document.write(`<div class="item-row">${t.name} — ${t.role}</div>`));
+  }
+  w.document.write(`
+    <div class="totals">
+      <div class="total-row"><span>Subtotal (excl. VAT)</span><span>£${q.subtotal.toFixed(2)}</span></div>
+      <div class="total-row"><span>VAT (20%)</span><span>£${q.vat.toFixed(2)}</span></div>
+      <div class="grand-total"><span>TOTAL (incl. VAT)</span><span>£${q.total.toFixed(2)}</span></div>
+    </div>
+    ${q.notes ? `<div class="notes">${q.notes}</div>` : ''}
+    <div class="footer">This quotation is valid for 30 days from date of issue &nbsp;·&nbsp; CreativePlug LTD</div>
+  `);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.print();
+}
+
+function clearQuote() {
+  document.getElementById('q-client').value='';
+  document.getElementById('q-date').value='';
+  document.getElementById('q-event').value='';
+  document.getElementById('q-venue').value='';
+  document.getElementById('q-notes').value='';
+  document.querySelectorAll('input[name="q-eq"], input[name="q-tech"]').forEach(cb=>cb.checked=false);
+  document.getElementById('quote-preview-wrap').innerHTML='<div class="empty-state" style="padding:60px 20px"><div class="empty-icon">📄</div>Fill in the form and click "Generate Quote" to preview.</div>';
+  state.activeQuote = null;
+}
+
+function renderSavedQuotes() {
+  const el = document.getElementById('saved-quotes-list');
+  if (!state.quotes.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div>No saved quotes yet.</div>'; return; }
+  el.innerHTML = state.quotes.slice().reverse().map(q => `
+    <div class="item-row">
+      <div style="flex:1">
+        <div class="item-name">${q.num} — ${q.client}</div>
+        <div class="item-meta">${q.event||''} · ${q.date||''} · Issued ${q.created}</div>
+      </div>
+      <span class="badge badge-accent" style="font-family:var(--mono)">£${q.total.toFixed(2)}</span>
+      ${q.invoiced ? '<span class="badge badge-green">Invoiced</span>' : `<button class="btn btn-secondary btn-sm" onclick="convertToInvoice(${q.id})">→ Invoice</button>`}
+      <button class="btn btn-danger btn-sm" onclick="deleteQuote(${q.id})">🗑 Delete</button>
+    </div>
+  `).join('');
+}
+
+function deleteQuote(id) {
+  state.quotes = state.quotes.filter(q => q.id !== id);
+  saveState(); renderSavedQuotes(); renderInvoices(); toast('Deleted');
+}
+
+// ========================
+// INVOICES
+// ========================
+// ========================
+// INVOICE AS SWITCHER
+// ========================
+let invoiceAs = 'company'; // 'company' or 'personal'
+
+function setInvoiceAs(mode) {
+  invoiceAs = mode;
+  document.getElementById('inv-as-company').className = mode==='company' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+  document.getElementById('inv-as-personal').className = mode==='personal' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+  const label = mode==='company' ? 'CreativePlug LTD' : 'Nagif Salvah';
+  document.getElementById('inv-as-label').innerHTML = `Invoicing as: <strong style="color:var(--accent)">${label}</strong>`;
+  toast(`Switched to ${label}`);
+}
+
+function getInvoicerDetails() {
+  if (invoiceAs === 'personal') {
+    return {
+      name: 'Nagif Salvah',
+      address: '78 Spencer Road, Luton LU3 1JU',
+      phone: 'Nagif: 07954075577',
+      email: 'salvahn@gmail.com',
+      web: '',
+      companyReg: '',
+      bankName: 'Nagif Salvah',
+      bankBank: 'Monzo Bank',
+      bankAccount: '56395987',
+      bankSort: '04-00-03',
+      logoType: 'personal'
+    };
+  }
+  return {
+    name: 'Creative Plug Ltd',
+    address: '78 Spencer Road, Luton LU3 1JU',
+    phone: 'Nagif: 07954075577; Rashed: 07403022777',
+    email: 'enquery@creativeplug.co.uk',
+    web: 'www.creativeplug.co.uk',
+    companyReg: '11475747',
+    bankName: 'Creative Plug Ltd',
+    bankBank: 'RBS',
+    bankAccount: '10918662',
+    bankSort: '16-00-53',
+    logoType: 'company'
+  };
+}
+
+function convertToInvoice(qid) {
+  const q = state.quotes.find(x => x.id === qid);
+  if (!q) return;
+  q.invoiced = true;
+  const prefix = invoiceAs === 'personal' ? 'NS' : 'CPL';
+  const invNum = prefix + Date.now().toString().slice(-6);
+  const inv = {...q, invNum, invDate: new Date().toLocaleDateString('en-GB'), paid: false, invoiceAs, poNumber: '', clientAddress: '', received: 0};
+  state.invoices.push(inv);
+  saveState(); renderSavedQuotes(); renderInvoices();
+  toast('✅ Invoice created — ' + invNum);
+}
+
+function renderInvoices() {
+  const el = document.getElementById('invoices-list');
+  if (!state.invoices.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🧾</div>No invoices yet. Save a quote first, then click "→ Invoice".</div>';
+    return;
+  }
+  el.innerHTML = state.invoices.slice().reverse().map(inv => {
+    const mode = inv.invoiceAs || 'company';
+    const modeLabel = mode === 'personal' ? 'Nagif Salvah' : 'CreativePlug LTD';
+    const modeBadge = mode === 'personal' ? 'badge-blue' : 'badge-orange';
+    return `
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="flex:1">
+          <div style="font-weight:700">${inv.invNum} — ${inv.client}</div>
+          <div style="font-size:12px;color:var(--text2)">${inv.event||''} · ${inv.date||''} · Issued ${inv.invDate}</div>
+          <span class="badge ${modeBadge}" style="margin-top:4px;display:inline-flex">👤 ${modeLabel}</span>
+        </div>
+        <span class="badge badge-accent" style="font-family:var(--mono)">£${inv.total.toFixed(2)}</span>
+        <span class="badge ${inv.paid?'badge-green':'badge-yellow'}">${inv.paid?'Paid':'Unpaid'}</span>
+        ${!inv.paid ? `<button class="btn btn-secondary btn-sm" onclick="markPaid(${inv.id})">Mark Paid</button>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="openInvoiceEdit(${inv.id})">✏️ Edit</button>
+        <button class="btn btn-primary btn-sm" onclick="printInvoice(${inv.id})">🖨 Print</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markPaid(id) {
+  const inv = state.invoices.find(x => x.id === id);
+  if (inv) { inv.paid = true; saveState(); renderInvoices(); toast('✅ Marked as paid'); }
+}
+
+function deleteInvoice(id) {
+  const inv = state.invoices.find(x => x.id === id);
+  if (!inv) return;
+  if (!confirm(`Delete invoice ${inv.invNum} for ${inv.client}? This cannot be undone.`)) return;
+  // Also un-mark the source quote as invoiced so it can be re-invoiced if needed
+  const srcQuote = state.quotes.find(q => q.id === inv.id);
+  if (srcQuote) srcQuote.invoiced = false;
+  state.invoices = state.invoices.filter(x => x.id !== id);
+  saveState();
+  renderInvoices();
+  renderSavedQuotes();
+  toast('🗑 Invoice deleted');
+}
+
+function openInvoiceEdit(id) {
+  const inv = state.invoices.find(x => x.id === id);
+  if (!inv) return;
+  document.getElementById('ie-id').value = id;
+  document.getElementById('ie-po').value = inv.poNumber || '';
+  document.getElementById('ie-client-address').value = inv.clientAddress || '';
+  document.getElementById('ie-received').value = inv.received || 0;
+  document.getElementById('ie-duedate').value = inv.dueDate || 'As soon as possible';
+  document.getElementById('ie-notes').value = inv.invNotes || '';
+  openModal('modal-invoice-edit');
+}
+
+function saveInvoiceEdit() {
+  const id = parseInt(document.getElementById('ie-id').value);
+  const inv = state.invoices.find(x => x.id === id);
+  if (!inv) return;
+  inv.poNumber = document.getElementById('ie-po').value.trim();
+  inv.clientAddress = document.getElementById('ie-client-address').value.trim();
+  inv.received = parseFloat(document.getElementById('ie-received').value) || 0;
+  inv.dueDate = document.getElementById('ie-duedate').value.trim();
+  inv.invNotes = document.getElementById('ie-notes').value.trim();
+  saveState(); renderInvoices(); closeModal('modal-invoice-edit');
+  toast('✅ Invoice updated');
+}
+
+function printInvoice(id) {
+  const inv = state.invoices.find(x => x.id === id);
+  if (!inv) return;
+
+  const mode = inv.invoiceAs || 'company';
+  const isPersonal = mode === 'personal';
+
+  const d = isPersonal ? {
+    logoHTML: `<div style="font-family:'Brush Script MT','Segoe Script',cursive;font-size:42px;color:#222;line-height:1.1;margin-bottom:6px">Nagif Salvah</div>`,
+    footerLine1: '78 Spencer Road, Luton LU3 1JU &nbsp;&nbsp; Phone: Nagif: 07954075577',
+    footerLine2: 'Email: salvahn@gmail.com',
+    footerLine3: '',
+    bankName: 'Nagif Salvah',
+    bankBank: 'Monzo Bank',
+    bankAccount: '56395987',
+    bankSort: '04-00-03'
+  } : {
+    logoHTML: `
+      <div style="display:inline-block">
+        <div style="font-family:'Arial Black',Arial,sans-serif;font-size:13px;color:#e85d04;letter-spacing:3px;text-transform:uppercase;line-height:1">Creative</div>
+        <div style="font-family:'Arial Black',Arial,sans-serif;font-size:34px;color:#1a1a2e;font-weight:900;line-height:1;letter-spacing:-1px">Plug</div>
+        <div style="font-size:10px;color:#aaa;letter-spacing:4px;text-transform:uppercase;margin-top:1px">LTD</div>
+      </div>`,
+    footerLine1: '78 Spencer Road, Luton LU3 1JU',
+    footerLine2: 'Phone: Nagif: 07954075577 &nbsp;|&nbsp; Rashed: 07403022777',
+    footerLine3: 'Email: enquery@creativeplug.co.uk &nbsp;|&nbsp; www.creativeplug.co.uk &nbsp;|&nbsp; Company Reg: 11475747',
+    bankName: 'Creative Plug Ltd',
+    bankBank: 'RBS',
+    bankAccount: '10918662',
+    bankSort: '16-00-53'
+  };
+
+  const totalDue = Math.max(0, inv.total - (inv.received || 0));
+  const allItems = [
+    ...inv.equipment.map(e => ({desc: e.name + (e.qty > 1 ? ' (x'+e.qty+')' : ''), amt: e.rate})),
+    ...inv.technicians.map(t => ({desc: `${t.name} — ${t.role}`, amt: t.rate}))
+  ];
+
+  const w = window.open('', '', 'width=860,height=1050');
+  w.document.write(`<!DOCTYPE html><html><head><title>Invoice ${inv.invNum}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;color:#111;font-size:13px;padding:44px 52px;line-height:1.5}
+    .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px}
+    .inv-right{text-align:left;min-width:220px}
+    .inv-label{font-family:'Arial Black',Arial,sans-serif;font-size:34px;font-weight:900;color:#111;letter-spacing:1px;display:inline}
+    .inv-refnum{font-size:15px;font-weight:700;color:#555;margin-left:10px;vertical-align:middle}
+    .inv-meta{margin-top:8px;font-size:12px;color:#444;border-collapse:collapse}
+    .inv-meta td{padding:1px 20px 1px 0;vertical-align:top}
+    .bill-label{background:#e85d04;color:#fff;font-weight:700;font-size:11px;padding:3px 9px;display:inline-block;margin-bottom:6px;letter-spacing:1px}
+    .gap{margin-top:32px}
+    .desc-table{width:100%;border-collapse:collapse;margin-top:8px}
+    .desc-table thead tr{border-top:3px solid #4a90d9;border-bottom:3px solid #4a90d9}
+    .desc-table th{padding:9px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+    .desc-table th.l{text-align:left}
+    .desc-table th.r{text-align:right}
+    .item-row td{padding:9px 12px;font-weight:700;border-bottom:1px solid #e8e8e8}
+    .item-row td.amt{text-align:right;min-width:80px}
+    .item-row td.cur{text-align:left;color:#666;width:20px}
+    .spacer td{padding:5px}
+    .summary-row td{padding:6px 12px}
+    .summary-label{text-align:right;color:#444}
+    .summary-val{text-align:right;font-weight:700;min-width:90px}
+    .box{border:1px solid #999;padding:3px 10px;display:inline-block;min-width:90px;text-align:right}
+    .bank-tbl{border-collapse:collapse;font-size:12px;margin-top:8px}
+    .bank-tbl td{border:1px solid #ccc;padding:4px 12px}
+    .bank-tbl td:first-child{background:#f5f5f5;font-weight:600;min-width:100px}
+    .footer{text-align:center;font-size:11px;color:#666;margin-top:60px;padding-top:14px;border-top:1px solid #ddd}
+    @media print{body{padding:20px 32px}}
+  </style></head><body>`);
+
+  w.document.write(`
+  <div class="top">
+    <div>${d.logoHTML}${!isPersonal ? '<div style="font-size:11px;color:#4a90d9;margin-top:6px">http://www.creativeplug.co.uk</div>' : ''}</div>
+    <div class="inv-right">
+      <div><span class="inv-label">INVOICE</span><span class="inv-refnum">${inv.invNum}</span></div>
+      <table class="inv-meta">
+        ${inv.poNumber ? `<tr><td><strong>PO No</strong></td><td>${inv.poNumber}</td></tr>` : ''}
+        <tr><td><strong>Date</strong></td><td>${inv.invDate}</td></tr>
+        <tr><td><strong>Due Date</strong></td><td>${inv.dueDate || 'As soon as possible'}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div class="bill-label">BILL TO</div><br>
+    <strong>${inv.client}</strong>
+    ${inv.clientAddress ? '<br><span style="color:#555;font-weight:400">'+inv.clientAddress.replace(/\n/g,'<br>')+'</span>' : ''}
+  </div>
+
+  <div class="gap">
+    <table class="desc-table">
+      <thead>
+        <tr>
+          <th class="l" style="width:70%">DESCRIPTION</th>
+          <th class="r" colspan="2">AMOUNT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="spacer"><td colspan="3"></td></tr>
+        ${allItems.map(item => `
+        <tr class="item-row">
+          <td>${item.desc}</td>
+          <td class="cur">£</td>
+          <td class="amt">${item.amt.toFixed(2)}</td>
+        </tr>`).join('')}
+        <tr class="spacer"><td colspan="3"></td></tr>
+        <tr style="border-top:3px solid #4a90d9;border-bottom:3px solid #4a90d9">
+          <td style="padding:6px 12px"></td>
+          <td style="padding:6px 12px;text-align:right;color:#444">Total &nbsp;&nbsp; £</td>
+          <td style="padding:6px 12px;text-align:right;font-weight:700">${inv.total.toFixed(2)}</td>
+        </tr>
+        <tr class="summary-row">
+          <td style="font-size:11px;color:#666;padding-top:8px">${inv.invNotes || ''}</td>
+          <td class="summary-label" style="padding-top:8px">Received</td>
+          <td style="padding-top:8px;text-align:right"><span class="box">${inv.received && inv.received > 0 ? '£ '+inv.received.toFixed(2) : ''}</span></td>
+        </tr>
+        <tr class="summary-row">
+          <td></td>
+          <td class="summary-label" style="padding-top:16px">Total Due</td>
+          <td style="padding-top:16px;text-align:right"><span class="box" style="font-weight:700">£ ${totalDue > 0 ? totalDue.toFixed(2) : '-'}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:28px">
+    <div style="font-weight:700;font-size:12px;margin-bottom:6px;text-align:center">Comments or special instructions:</div>
+    <table class="bank-tbl">
+      <tr><td colspan="2">For Bank Transfers, please use the following details.</td></tr>
+      <tr><td>Bank Transfer</td><td></td></tr>
+      <tr><td>Name:</td><td>${d.bankName}</td></tr>
+      <tr><td>Ref:</td><td>${inv.poNumber || inv.invNum}</td></tr>
+      <tr><td>Bank Name:</td><td>${d.bankBank}</td></tr>
+      <tr><td>Account No:</td><td>${d.bankAccount}</td></tr>
+      <tr><td>Sort Code:</td><td>${d.bankSort}</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    ${d.footerLine1}<br>
+    ${d.footerLine2}
+    ${d.footerLine3 ? '<br>'+d.footerLine3 : ''}
+  </div>
+  </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// ========================
+// REQUIREMENTS / SUGGESTIONS
+// ========================
+function checkReqAvail() {} // triggered on date change, handled in analyseRequirements
+
+function analyseRequirements() {
+  const date = document.getElementById('r-date').value;
+  const type = document.getElementById('r-type').value;
+  const size = document.getElementById('r-size').value;
+  const needs = document.getElementById('r-needs').value.toLowerCase();
+  const budget = document.getElementById('r-budget').value;
+
+  document.getElementById('req-empty').style.display = 'none';
+  document.getElementById('req-results').style.display = 'block';
+
+  // Match equipment
+  const equipMatches = state.inventory.filter(item => {
+    const inNeeds = needs.includes(item.cat) || needs.includes(item.name.toLowerCase().split(' ')[0]);
+    return inNeeds || needsCategory(needs, item.cat);
+  });
+
+  // Match technicians by skills needed
+  const skillsNeeded = detectSkillsFromNeeds(needs);
+  const techMatches = state.technicians.filter(t =>
+    t.skills.some(s => skillsNeeded.map(x=>x.toLowerCase()).includes(s.toLowerCase()))
+  );
+
+  const availEquip = equipMatches.filter(i => !date || isItemAvailableOn(i, date));
+  const unavailEquip = equipMatches.filter(i => date && !isItemAvailableOn(i, date));
+  const availTech = techMatches.filter(t => !date || isTechAvailableOn(t, date));
+  const unavailTech = techMatches.filter(t => date && !isTechAvailableOn(t, date));
+
+  const estCost = availEquip.reduce((s,i)=>s+i.rate,0) + availTech.reduce((s,t)=>s+t.rate,0);
+
+  let html = '';
+
+  if (date) html += `<div style="margin-bottom:12px"><span class="badge badge-accent">Checking availability for ${date}</span></div>`;
+
+  html += `<div style="margin-bottom:14px"><div class="card-title" style="margin-bottom:8px">✅ Equipment Available</div>`;
+  if (availEquip.length) {
+    html += availEquip.map(i=>`<div class="item-row" style="margin-bottom:6px">
+      <span class="avail-dot green"></span>
+      <span class="item-name">${i.name}</span>
+      <span class="badge badge-${catColor(i.cat)}">${i.cat}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--accent);margin-left:auto">£${i.rate}/day</span>
+    </div>`).join('');
+  } else html += `<div style="color:var(--text3);font-size:12px">No matching equipment available. Consider adding more to inventory.</div>`;
+
+  if (unavailEquip.length) {
+    html += `<div class="card-title" style="margin:12px 0 8px">🔴 Already Booked on This Date</div>`;
+    html += unavailEquip.map(i=>`<div class="item-row" style="margin-bottom:6px;opacity:0.5">
+      <span class="avail-dot red"></span><span class="item-name">${i.name}</span>
+    </div>`).join('');
+  }
+
+  html += `</div><div style="margin-bottom:14px"><div class="card-title" style="margin-bottom:8px">👷 Technicians Available</div>`;
+  if (availTech.length) {
+    html += availTech.map(t=>`<div class="item-row" style="margin-bottom:6px">
+      <span class="avail-dot green"></span>
+      <span class="item-name">${t.name}</span>
+      <span class="badge badge-blue">${t.role}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--accent);margin-left:auto">£${t.rate}/day</span>
+    </div>`).join('');
+  } else html += `<div style="color:var(--text3);font-size:12px">No matching technicians found for the skills needed.</div>`;
+
+  html += `</div>`;
+
+  if (estCost > 0) {
+    html += `<div style="background:rgba(232,255,71,0.06);border:1px solid rgba(232,255,71,0.2);border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:4px;font-family:var(--mono)">ESTIMATED COST (excl. VAT)</div>
+      <div style="font-family:var(--mono);font-size:22px;color:var(--accent);font-weight:700">£${estCost.toFixed(2)}</div>
+      ${budget ? `<div style="font-size:11px;color:var(--text2);margin-top:4px">Client budget: ${budget}</div>` : ''}
+    </div>`;
+  }
+
+  html += `<div style="margin-top:14px"><button class="btn btn-primary" onclick="useReqForQuote()">Use This Selection for Quote →</button></div>`;
+
+  document.getElementById('req-results-inner').innerHTML = html;
+}
+
+function needsCategory(needs, cat) {
+  const map = {
+    audio: ['pa','sound','speaker','microphone','mix','monitor','subwoofer','bass'],
+    lighting: ['light','spot','wash','beam','moving head','dimmer','par can','stage light'],
+    video: ['screen','projector','led wall','video','display','stream'],
+    staging: ['truss','stage','rigging','stand','scaffold','structure'],
+    power: ['power','distro','generator','cable','rcd'],
+  };
+  const keywords = map[cat] || [];
+  return keywords.some(k => needs.includes(k));
+}
+
+function detectSkillsFromNeeds(needs) {
+  const found = [];
+  if (needs.includes('audio')||needs.includes('sound')||needs.includes('pa')) found.push('Audio','PA Op','Analogue Desk SE','Digital Desk SE');
+  if (needs.includes('light')) found.push('Lighting');
+  if (needs.includes('video')||needs.includes('led')||needs.includes('screen')||needs.includes('resolume')||needs.includes('vmix')) found.push('Video','LED Video','Resolume Op','Vmix Op');
+  if (needs.includes('rig')) found.push('Rigging');
+  if (needs.includes('derig')||needs.includes('de-rig')) found.push('De-rig');
+  if (needs.includes('stage')) found.push('Stage Hand','Stage Mgmt');
+  if (needs.includes('driv')) found.push('Can Drive');
+  if (needs.includes('sing')||needs.includes('vocal')||needs.includes('singer')) found.push('Singing');
+  if (needs.includes('drum')) found.push('Drums','Octopad');
+  if (needs.includes('keyboard')||needs.includes('keys')||needs.includes('piano')) found.push('Keyboard');
+  if (needs.includes('guitar')) found.push('Guitar','Bass Guitar');
+  if (needs.includes('tabla')) found.push('Tabla');
+  if (needs.includes('band')||needs.includes('music')) found.push('Singing','Guitar','Drums','Keyboard','Bass Guitar');
+  if (needs.includes('present')||needs.includes('host')||needs.includes('mc')) found.push('Presenter','Event Manager');
+  if (!found.length) found.push('Audio','Lighting','Stage Hand');
+  return found;
+}
+
+function useReqForQuote() {
+  showSection('quotes');
+  toast('📄 Switching to quote builder — review and generate your quote');
+}
+
+// ========================
+// DASHBOARD
+// ========================
+function updateDashboard() {
+  updateStats();
+  const bDiv = document.getElementById('dash-bookings');
+  const upcoming = state.bookings.filter(b => b.from >= new Date().toISOString().split('T')[0]).sort((a,b)=>a.from.localeCompare(b.from)).slice(0,5);
+  if (upcoming.length) {
+    bDiv.innerHTML = upcoming.map(b=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="showSection('bookings')">
+      <div style="font-weight:600;font-size:13px">${b.event||b.client}</div>
+      <div style="font-size:11px;color:var(--text2)">${b.from} · ${b.client}</div>
+    </div>`).join('');
+  } else {
+    bDiv.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div>No upcoming bookings</div>';
+  }
+
+  const qDiv = document.getElementById('dash-quotes');
+  if (state.quotes.length) {
+    qDiv.innerHTML = state.quotes.slice().reverse().slice(0,5).map(q=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="font-weight:600;font-size:13px">${q.num} — ${q.client}</div>
+      <div style="font-size:11px;color:var(--text2)">£${q.total.toFixed(2)} · ${q.created}</div>
+    </div>`).join('');
+  } else {
+    qDiv.innerHTML = '<div class="empty-state"><div class="empty-icon">💷</div>No quotes yet</div>';
+  }
+}
+
+function updateStats() {
+  document.getElementById('stat-inventory').textContent = state.inventory.length;
+  document.getElementById('stat-techs').textContent = state.technicians.length;
+  document.getElementById('stat-bookings').textContent = state.bookings.filter(b => b.status !== 'Cancelled').length;
+}
+
+// ========================
+// PAYMENT + BOOKING UPDATES
+// ========================
+function updateStats() {
+  const el1 = document.getElementById('stat-inventory');
+  const el2 = document.getElementById('stat-techs');
+  const el3 = document.getElementById('stat-bookings');
+  if (el1) el1.textContent = state.inventory.length;
+  if (el2) el2.textContent = state.technicians.length;
+  if (el3) el3.textContent = state.bookings.filter(b => b.status !== 'Cancelled').length;
+  const active = state.bookings.filter(b => b.status !== 'Cancelled');
+  const totalFee = active.reduce((s,b) => s+(b.fee||0), 0);
+  const totalRec = active.reduce((s,b) => s+(b.received||0), 0);
+  const totalDue = Math.max(0, totalFee - totalRec);
+  const e1 = document.getElementById('stat-earned');
+  const e2 = document.getElementById('stat-received');
+  const e3 = document.getElementById('stat-due');
+  if (e1) e1.textContent = 'GBP'+totalFee.toFixed(2);
+  if (e2) e2.textContent = 'GBP'+totalRec.toFixed(2);
+  if (e3) e3.textContent = 'GBP'+totalDue.toFixed(2);
+}
+
+function quickStatusUpdate(id, newStatus) {
+  const b = state.bookings.find(x => x.id === id);
+  if (!b) return;
+  b.status = newStatus;
+  saveState();
+  updateDashboard();
+  renderCalendar();
+  toast('Status: ' + newStatus);
+}
+
+function duplicateBooking(id) {
+  const b = state.bookings.find(x => x.id === id);
+  if (!b) return;
+  const copy = JSON.parse(JSON.stringify(b));
+  copy.id = Date.now();
+  copy.status = 'Provisional';
+  copy.paymentStatus = 'unpaid';
+  copy.received = 0;
+  state.bookings.push(copy);
+  saveState();
+  renderBookings();
+  updateDashboard();
+  toast('Booking duplicated - edit the date');
+}
+
+// ========================
+// REPORTS
+// ========================
+function toggleReportType() {
+  const type = document.getElementById('rpt-type').value;
+  document.getElementById('rpt-from-group').style.display = type === 'custom' ? '' : 'none';
+  document.getElementById('rpt-to-group').style.display = type === 'custom' ? '' : 'none';
+}
+
+function generateReport() {
+  const type = document.getElementById('rpt-type').value;
+  const now = new Date();
+  let fromDate, toDate, periodLabel;
+  if (type === 'month') {
+    fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    toDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    periodLabel = now.toLocaleString('default', {month:'long', year:'numeric'});
+  } else {
+    const fromVal = document.getElementById('rpt-from').value;
+    const toVal = document.getElementById('rpt-to').value;
+    if (!fromVal || !toVal) { toast('Please select both dates'); return; }
+    const [fy,fm] = fromVal.split('-').map(Number);
+    const [ty,tm] = toVal.split('-').map(Number);
+    fromDate = new Date(fy, fm-1, 1);
+    toDate = new Date(ty, tm, 0);
+    periodLabel = new Date(fy,fm-1).toLocaleString('default',{month:'long',year:'numeric'}) + ' to ' + new Date(ty,tm-1).toLocaleString('default',{month:'long',year:'numeric'});
+  }
+  const fromStr = fromDate.toISOString().split('T')[0];
+  const toStr = toDate.toISOString().split('T')[0];
+  const inRange = state.bookings.filter(b => b.from >= fromStr && b.from <= toStr);
+  const confirmed = inRange.filter(b => b.status === 'Confirmed');
+  const cancelled = inRange.filter(b => b.status === 'Cancelled');
+  const provisional = inRange.filter(b => b.status === 'Provisional' || b.status === 'Quote Sent');
+  const active = inRange.filter(b => b.status !== 'Cancelled');
+  const totalFee = active.reduce((s,b) => s+(b.fee||0), 0);
+  const totalRec = active.reduce((s,b) => s+(b.received||0), 0);
+  const totalDue = Math.max(0, totalFee - totalRec);
+  const dueShows = active.filter(b => (b.paymentStatus === 'unpaid' || b.paymentStatus === 'partial'));
+  const el = document.getElementById('report-output');
+  el.innerHTML = `
+    <div style="padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px">
+      <div style="font-size:18px;font-weight:700">Report: ${periodLabel}</div>
+    </div>
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="stat-card" style="border-left:4px solid var(--success)">
+        <div class="stat-num" style="color:var(--success)">${confirmed.length}</div>
+        <div class="stat-label">Shows Done</div>
+      </div>
+      <div class="stat-card" style="border-left:4px solid var(--danger)">
+        <div class="stat-num" style="color:var(--danger)">${cancelled.length}</div>
+        <div class="stat-label">Cancelled</div>
+      </div>
+      <div class="stat-card" style="border-left:4px solid var(--warning)">
+        <div class="stat-num" style="color:var(--warning)">${provisional.length}</div>
+        <div class="stat-label">Provisional</div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="stat-card" style="border-left:4px solid #333">
+        <div class="stat-num">£${totalFee.toFixed(2)}</div>
+        <div class="stat-label">Total Agreed</div>
+      </div>
+      <div class="stat-card" style="border-left:4px solid var(--success)">
+        <div class="stat-num" style="color:var(--success)">£${totalRec.toFixed(2)}</div>
+        <div class="stat-label">Received</div>
+      </div>
+    </div>
+    ${totalDue > 0 ? `<div style="background:#fff3f3;border:2px solid var(--danger);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div><div style="font-weight:700;color:var(--danger)">Outstanding Balance</div>
+      <div style="font-size:12px;color:var(--text2)">${dueShows.length} show${dueShows.length!==1?'s':''} with payments due</div></div>
+      <div style="font-size:26px;font-weight:700;color:var(--danger)">£${totalDue.toFixed(2)}</div>
+    </div>` : `<div style="background:#f0fff6;border:2px solid var(--success);border-radius:var(--radius);padding:14px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--success)">All Clear - No outstanding payments</div>
+    </div>`}
+    ${dueShows.length > 0 ? `<div class="card" style="margin-bottom:16px">
+      <div class="card-title">Payments Still Due</div>
+      ${dueShows.map(b => {
+        const owing = Math.max(0,(b.fee||0)-(b.received||0));
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px"><div><div style="font-weight:600">'+( b.event||b.client)+'</div><div style="font-size:12px;color:var(--text2)">'+b.client+' - '+b.from+'</div></div><div style="font-weight:700;color:var(--danger)">£'+owing.toFixed(2)+'</div></div>';
+      }).join('')}
+    </div>` : ''}
+    <div class="card">
+      <div class="card-title">All Shows (${inRange.length})</div>
+      ${inRange.sort((a,b)=>a.from.localeCompare(b.from)).map(b => {
+        const sc = {Confirmed:'badge-green',Provisional:'badge-yellow','Quote Sent':'badge-blue',Cancelled:'badge-red'}[b.status]||'badge-blue';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap"><div style="flex:1"><div style="font-weight:600">'+( b.event||b.client)+'</div><div style="font-size:12px;color:var(--text2)">'+b.from+' - '+(b.venue||'No venue')+'</div></div><span class="badge '+sc+'">'+b.status+'</span>'+( b.fee?'<span style="font-family:var(--mono);font-size:12px">£'+(b.fee||0).toFixed(2)+'</span>':'')+'</div>';
+      }).join('')}
+    </div>
+    <div style="margin-top:14px;text-align:right">
+      <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+    </div>`;
+}
+
+// ========================
+// CLIENTS
+// ========================
+function renderClients() {
+  if (!state.clients) state.clients = [];
+  const el = document.getElementById('clients-list');
+  if (!el) return;
+  if (!state.clients.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>No clients yet.</div>';
+    return;
+  }
+  el.innerHTML = state.clients.map(cl => `
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="flex:1">
+          <div style="font-weight:700">${cl.name}</div>
+          <div style="font-size:12px;color:var(--text2)">${cl.contact||''} ${cl.phone?'· '+cl.phone:''} ${cl.email?'· '+cl.email:''}</div>
+        </div>
+        ${cl.phone ? `<a href="https://wa.me/${cl.phone.replace(/[^0-9]/g,'')}" target="_blank" class="btn btn-secondary btn-sm">WhatsApp</a>
+        <a href="tel:${cl.phone}" class="btn btn-secondary btn-sm">Call</a>` : ''}
+        ${cl.email ? `<a href="mailto:${cl.email}" class="btn btn-secondary btn-sm">Email</a>` : ''}
+        <button class="btn btn-danger btn-sm" onclick="deleteClient(${cl.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addClient() {
+  const name = document.getElementById('cl-name').value.trim();
+  if (!name) { toast('Enter client name'); return; }
+  if (!state.clients) state.clients = [];
+  state.clients.push({
+    id: Date.now(), name,
+    contact: document.getElementById('cl-contact').value.trim(),
+    phone: document.getElementById('cl-phone').value.trim(),
+    email: document.getElementById('cl-email').value.trim(),
+    notes: document.getElementById('cl-notes').value.trim()
+  });
+  saveState();
+  closeModal('modal-add-client');
+  renderClients();
+  toast('Client saved');
+  ['cl-name','cl-contact','cl-phone','cl-email','cl-notes'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+}
+
+function deleteClient(id) {
+  if (!confirm('Delete this client?')) return;
+  state.clients = state.clients.filter(x => x.id !== id);
+  saveState(); renderClients(); toast('Deleted');
+}
+
+// ========================
+// CREW AVAILABILITY
+// ========================
+function checkCrewAvail() {
+  const date = document.getElementById('avail-date').value;
+  if (!date) { toast('Pick a date first'); return; }
+  const el = document.getElementById('crew-avail-output');
+  const available = [], busy = [];
+  state.technicians.forEach(t => {
+    const isBooked = state.bookings.some(b => b.technicians && b.technicians.includes(t.id) && dateInRange(date, b.from, b.to) && b.status !== 'Cancelled');
+    const isUnavail = t.booked && t.booked.includes('unavailable');
+    if (isBooked || isUnavail) {
+      const bk = state.bookings.find(b => b.technicians && b.technicians.includes(t.id) && dateInRange(date, b.from, b.to));
+      busy.push({t, bk});
+    } else available.push(t);
+  });
+  el.innerHTML = `<div class="grid2">
+    <div class="card">
+      <div class="card-title" style="color:var(--success)">Available (${available.length})</div>
+      ${available.length ? available.map(t => '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">'+t.name+'</div><div style="font-size:12px;color:var(--text2)">'+t.role+' - £'+t.rate+'/day</div></div>').join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">No one available.</div>'}
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--danger)">Busy (${busy.length})</div>
+      ${busy.length ? busy.map(({t,bk}) => '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">'+t.name+'</div>'+(bk?'<div style="font-size:12px;color:var(--danger)">'+(bk.event||bk.client)+' - '+(bk.venue||'')+'</div>':'<div style="font-size:11px;color:var(--text3)">Marked unavailable</div>')+'</div>').join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">Everyone is free!</div>'}
+    </div>
+  </div>`;
+}
+
+// ========================
+// INIT
+// ========================
+loadState();
+renderCalendar();
+updateDashboard();
+renderInventory();
+renderTechs();
+renderBookings();
+renderSavedQuotes();
+renderInvoices();
+
+// Pre-fill booking modal availability on open
+document.getElementById('modal-add-booking').addEventListener('click', function(e) {
+  if (e.target === this) closeModal('modal-add-booking');
+});
+['modal-add-item','modal-add-tech','modal-edit-tech','modal-view-booking','modal-invoice-edit','modal-edit-booking','modal-add-client'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) closeModal(id);
+  });
+});
+</script>
+</body>
+</html>
