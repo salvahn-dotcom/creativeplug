@@ -504,13 +504,57 @@
   }
   .toast.show { transform: translateY(0); opacity: 1; }
 
-  /* RESPONSIVE */
+  /* RESPONSIVE - Mobile bottom nav */
   @media (max-width: 768px) {
-    .sidebar { width: 60px; min-width: 60px; }
-    .sidebar-logo, .nav-section, .nav-btn span { display: none; }
-    .nav-btn { justify-content: center; padding: 12px; }
-    .main { margin-left: 60px; padding: 20px 14px; }
+    .sidebar {
+      width: 100% !important;
+      min-width: unset !important;
+      height: 64px;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      flex-direction: row;
+      border-right: none;
+      border-top: 2px solid var(--border);
+      z-index: 200;
+      overflow-x: auto;
+      overflow-y: hidden;
+      background: var(--surface);
+    }
+    .sidebar-logo { display: none; }
+    nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 4px;
+      flex: 1;
+      overflow-x: auto;
+      gap: 2px;
+    }
+    .nav-section { display: none; }
+    .nav-btn {
+      flex-direction: column;
+      gap: 2px;
+      padding: 6px 8px;
+      min-width: 52px;
+      border-radius: 8px;
+      white-space: nowrap;
+      color: var(--text2);
+    }
+    .nav-btn.active { background: var(--accent); color: #fff; }
+    .nav-btn .icon { font-size: 18px; width: auto; }
+    .nav-btn span { display: block; font-size: 9px; line-height: 1; }
+    .main {
+      margin-left: 0 !important;
+      margin-bottom: 72px;
+      padding: 16px 12px;
+    }
     .grid2, .grid3 { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; gap: 10px; }
+    .modal { padding: 16px; max-width: 100%; }
+    .form-row { flex-direction: column; }
+    .tab-row { overflow-x: auto; flex-wrap: nowrap; }
   }
 
   .ical-note {
@@ -619,6 +663,15 @@
       <button class="nav-btn" onclick="showSection('requirements')">
         <span class="icon">🎯</span><span>Requirements</span>
       </button>
+      <button class="nav-btn" onclick="showSection('reports')">
+        <span class="icon">📊</span><span>Reports</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('clients')">
+        <span class="icon">👥</span><span>Clients</span>
+      </button>
+      <button class="nav-btn" onclick="showSection('availability')">
+        <span class="icon">🗓</span><span>Crew</span>
+      </button>
     </nav>
   </aside>
 
@@ -634,7 +687,7 @@
         <button class="btn btn-primary" onclick="showSection('quotes'); setTimeout(()=>openNewQuote(),100)">+ New Quote</button>
       </div>
 
-      <div class="grid3" style="margin-bottom:20px">
+      <div class="grid3" style="margin-bottom:16px">
         <div class="stat-card">
           <div class="stat-num" id="stat-inventory">0</div>
           <div class="stat-label">Equipment Items</div>
@@ -646,6 +699,20 @@
         <div class="stat-card">
           <div class="stat-num" id="stat-bookings">0</div>
           <div class="stat-label">Active Bookings</div>
+        </div>
+      </div>
+      <div class="grid3" style="margin-bottom:20px">
+        <div class="stat-card" style="border-left:4px solid var(--success)">
+          <div class="stat-num" id="stat-earned" style="color:var(--success)">£0</div>
+          <div class="stat-label">Total Agreed Fees</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid #333">
+          <div class="stat-num" id="stat-received">£0</div>
+          <div class="stat-label">Total Received</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid var(--danger)">
+          <div class="stat-num" id="stat-due" style="color:var(--danger)">£0</div>
+          <div class="stat-label">Outstanding</div>
         </div>
       </div>
 
@@ -914,6 +981,65 @@
       </div>
     </section>
 
+    <!-- REPORTS -->
+    <section class="section" id="sec-reports">
+      <div class="page-header">
+        <div><div class="page-title">Monthly Reports</div>
+        <div class="page-sub">Shows, payments and dues</div></div>
+        <button class="btn btn-primary" onclick="generateReport()">Generate</button>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Report Period</div>
+        <div class="form-row" style="align-items:flex-end">
+          <div class="form-group">
+            <label>Period</label>
+            <select id="rpt-type" onchange="toggleReportType()">
+              <option value="month">Current Month</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div class="form-group" id="rpt-from-group" style="display:none">
+            <label>From</label>
+            <input id="rpt-from" type="month">
+          </div>
+          <div class="form-group" id="rpt-to-group" style="display:none">
+            <label>To</label>
+            <input id="rpt-to" type="month">
+          </div>
+          <button class="btn btn-primary" onclick="generateReport()">Generate</button>
+        </div>
+      </div>
+      <div id="report-output"><div class="empty-state"><div class="empty-icon">📊</div>Select a period and click Generate.</div></div>
+    </section>
+
+    <!-- CLIENTS -->
+    <section class="section" id="sec-clients">
+      <div class="page-header">
+        <div><div class="page-title">Client Database</div>
+        <div class="page-sub">Save client contact details</div></div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-client')">+ Add Client</button>
+      </div>
+      <div id="clients-list"></div>
+    </section>
+
+    <!-- CREW AVAILABILITY -->
+    <section class="section" id="sec-availability">
+      <div class="page-header">
+        <div><div class="page-title">Crew Availability</div>
+        <div class="page-sub">See who is free on any date</div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="form-row" style="align-items:flex-end">
+          <div class="form-group">
+            <label>Check Date</label>
+            <input id="avail-date" type="date" onchange="checkCrewAvail()">
+          </div>
+          <button class="btn btn-primary" onclick="checkCrewAvail()">Check</button>
+        </div>
+      </div>
+      <div id="crew-avail-output"><div class="empty-state"><div class="empty-icon">🗓</div>Pick a date to see who is available.</div></div>
+    </section>
+
   </main>
 </div>
 
@@ -1007,6 +1133,24 @@
       <label>Technicians</label>
       <div id="eb-tech-list" style="max-height:140px;overflow-y:auto;margin-top:6px"></div>
     </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Agreed Fee (£)</label>
+        <input id="eb-fee" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Amount Received (£)</label>
+        <input id="eb-received" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Payment Status</label>
+      <select id="eb-payment">
+        <option value="unpaid">⏳ Payment Due</option>
+        <option value="partial">💰 Partially Paid</option>
+        <option value="paid">✅ All Clear — Paid in Full</option>
+      </select>
+    </div>
     <div class="form-group" style="margin-bottom:14px">
       <label>Notes</label>
       <textarea id="eb-notes" placeholder="Any additional notes…"></textarea>
@@ -1014,6 +1158,44 @@
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn btn-secondary" onclick="closeModal('modal-edit-booking')">Cancel</button>
       <button class="btn btn-primary" onclick="saveEditBooking()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Client -->
+<div class="modal-bg" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Client</div>
+      <button class="close-btn" onclick="closeModal('modal-add-client')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client / Company Name</label>
+        <input id="cl-name" type="text" placeholder="e.g. Pappu Events">
+      </div>
+      <div class="form-group">
+        <label>Contact Person</label>
+        <input id="cl-contact" type="text" placeholder="e.g. Mr Rahman">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone / WhatsApp</label>
+        <input id="cl-phone" type="tel" placeholder="07700 900000">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="cl-email" type="email" placeholder="client@email.com">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Notes</label>
+      <input id="cl-notes" type="text" placeholder="Any notes about this client">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-client')">Cancel</button>
+      <button class="btn btn-primary" onclick="addClient()">Save Client</button>
     </div>
   </div>
 </div>
@@ -1275,6 +1457,24 @@
       <label>Technicians (select those available on chosen date)</label>
       <div id="bk-tech-list" style="max-height:140px;overflow-y:auto;margin-top:6px"></div>
     </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Agreed Fee (£)</label>
+        <input id="bk-fee" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Amount Received (£)</label>
+        <input id="bk-received" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label>Payment Status</label>
+      <select id="bk-payment">
+        <option value="unpaid">⏳ Payment Due</option>
+        <option value="partial">💰 Partially Paid</option>
+        <option value="paid">✅ All Clear — Paid in Full</option>
+      </select>
+    </div>
     <div class="form-group" style="margin-bottom:14px">
       <label>Notes</label>
       <textarea id="bk-notes" placeholder="Any additional notes…"></textarea>
@@ -1339,6 +1539,7 @@ function showSection(id) {
   if (id === 'bookings') renderBookings();
   if (id === 'quotes') renderQuoteSelectors();
   if (id === 'invoices') renderInvoices();
+  if (id === 'clients') renderClients();
 }
 
 function openModal(id) {
@@ -1675,7 +1876,10 @@ function saveBooking() {
     status: document.getElementById('bk-status').value,
     equipment,
     technicians,
-    notes: document.getElementById('bk-notes').value.trim()
+    notes: document.getElementById('bk-notes').value.trim(),
+    fee: parseFloat(document.getElementById('bk-fee').value) || 0,
+    received: parseFloat(document.getElementById('bk-received').value) || 0,
+    paymentStatus: document.getElementById('bk-payment').value
   };
 
   state.bookings.push(booking);
@@ -1697,15 +1901,26 @@ function renderBookings() {
     const statusColor = {Confirmed:'green',Provisional:'yellow','Quote Sent':'blue',Cancelled:'red'}[b.status]||'blue';
     const eqNames = b.equipment.map(id => { const i=state.inventory.find(x=>x.id===id); return i?i.name:'?'; }).join(', ')||'None';
     const techNames = b.technicians.map(id => { const t=state.technicians.find(x=>x.id===id); return t?t.name:'?'; }).join(', ')||'None';
-    return `<div class="card" style="cursor:pointer;margin-bottom:10px" onclick="viewBooking(${b.id})">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <div style="flex:1">
+    const payColor = {paid:'badge-green',partial:'badge-yellow',unpaid:'badge-red'}[b.paymentStatus||'unpaid'];
+    const payLabel = {paid:'Paid',partial:'Part Paid',unpaid:'Due'}[b.paymentStatus||'unpaid'];
+    const due = Math.max(0,(b.fee||0)-(b.received||0));
+    return `<div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;cursor:pointer;min-width:120px" onclick="viewBooking(${b.id})">
           <div style="font-weight:700">${b.event||b.client}</div>
-          <div style="font-size:12px;color:var(--text2)">${b.client} · ${b.from}${b.to && b.to!==b.from?' → '+b.to:''} · ${b.venue||'No venue'}</div>
+          <div style="font-size:12px;color:var(--text2)">${b.client} · ${b.from}${b.to && b.to!==b.from?' - '+b.to:''} · ${b.venue||'No venue'}</div>
         </div>
-        <span class="badge badge-${statusColor}">${b.status}</span>
+        <select onchange="quickStatusUpdate(${b.id}, this.value)" onclick="event.stopPropagation()" style="font-size:11px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font)">
+          <option value="Confirmed" ${b.status==='Confirmed'?'selected':''}>Confirmed</option>
+          <option value="Provisional" ${b.status==='Provisional'?'selected':''}>Provisional</option>
+          <option value="Quote Sent" ${b.status==='Quote Sent'?'selected':''}>Quote Sent</option>
+          <option value="Cancelled" ${b.status==='Cancelled'?'selected':''}>Cancelled</option>
+        </select>
+        <span class="badge ${payColor}">${payLabel}</span>
+        ${b.fee ? `<span style="font-family:var(--mono);font-size:12px;font-weight:700">£${(b.fee||0).toFixed(2)}${due>0?' (£'+due.toFixed(2)+' due)':''}</span>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="duplicateBooking(${b.id})" style="flex-shrink:0">Copy</button>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:var(--text3)">🎛 ${eqNames} &nbsp;|&nbsp; 👷 ${techNames}</div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text3)">Equipment: ${eqNames} | Crew: ${techNames}</div>
     </div>`;
   }).join('');
 }
@@ -1725,6 +1940,9 @@ function viewBooking(id) {
     </div>
     <div style="font-size:13px;margin-bottom:6px"><strong>Client:</strong> ${b.client}</div>
     <div style="font-size:13px;margin-bottom:6px"><strong>Venue:</strong> ${b.venue||'—'}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Agreed Fee:</strong> ${b.fee?'£'+(b.fee||0).toFixed(2):'Not set'}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Received:</strong> £${(b.received||0).toFixed(2)}</div>
+    <div style="font-size:13px;margin-bottom:6px"><strong>Balance Due:</strong> <span style="color:${((b.fee||0)-(b.received||0))>0?'var(--danger)':'var(--success)'}">£${Math.max(0,(b.fee||0)-(b.received||0)).toFixed(2)}</span></div>
     <div style="font-size:13px;margin-bottom:10px"><strong>Notes:</strong> ${b.notes||'—'}</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:4px">EQUIPMENT</div>
     ${eqNames.length ? eqNames.map(n=>`<span class="badge badge-orange" style="margin:2px">${n}</span>`).join('') : '<span style="color:var(--text3);font-size:12px">None</span>'}
@@ -1754,6 +1972,9 @@ function openEditBooking() {
   document.getElementById('eb-venue').value = b.venue || '';
   document.getElementById('eb-status').value = b.status;
   document.getElementById('eb-notes').value = b.notes || '';
+  document.getElementById('eb-fee').value = b.fee || '';
+  document.getElementById('eb-received').value = b.received || '';
+  document.getElementById('eb-payment').value = b.paymentStatus || 'unpaid';
 
   refreshEditBookingAvail(b);
   openModal('modal-edit-booking');
@@ -1813,6 +2034,9 @@ function saveEditBooking() {
   b.venue = document.getElementById('eb-venue').value.trim();
   b.status = document.getElementById('eb-status').value;
   b.notes = document.getElementById('eb-notes').value.trim();
+  b.fee = parseFloat(document.getElementById('eb-fee').value) || 0;
+  b.received = parseFloat(document.getElementById('eb-received').value) || 0;
+  b.paymentStatus = document.getElementById('eb-payment').value;
   b.equipment = Array.from(document.querySelectorAll('input[name="eb-eq"]:checked')).map(cb => parseInt(cb.value));
   b.technicians = Array.from(document.querySelectorAll('input[name="eb-tech"]:checked')).map(cb => parseInt(cb.value));
 
@@ -2553,6 +2777,225 @@ function updateStats() {
 }
 
 // ========================
+// PAYMENT + BOOKING UPDATES
+// ========================
+function updateStats() {
+  const el1 = document.getElementById('stat-inventory');
+  const el2 = document.getElementById('stat-techs');
+  const el3 = document.getElementById('stat-bookings');
+  if (el1) el1.textContent = state.inventory.length;
+  if (el2) el2.textContent = state.technicians.length;
+  if (el3) el3.textContent = state.bookings.filter(b => b.status !== 'Cancelled').length;
+  const active = state.bookings.filter(b => b.status !== 'Cancelled');
+  const totalFee = active.reduce((s,b) => s+(b.fee||0), 0);
+  const totalRec = active.reduce((s,b) => s+(b.received||0), 0);
+  const totalDue = Math.max(0, totalFee - totalRec);
+  const e1 = document.getElementById('stat-earned');
+  const e2 = document.getElementById('stat-received');
+  const e3 = document.getElementById('stat-due');
+  if (e1) e1.textContent = 'GBP'+totalFee.toFixed(2);
+  if (e2) e2.textContent = 'GBP'+totalRec.toFixed(2);
+  if (e3) e3.textContent = 'GBP'+totalDue.toFixed(2);
+}
+
+function quickStatusUpdate(id, newStatus) {
+  const b = state.bookings.find(x => x.id === id);
+  if (!b) return;
+  b.status = newStatus;
+  saveState();
+  updateDashboard();
+  renderCalendar();
+  toast('Status: ' + newStatus);
+}
+
+function duplicateBooking(id) {
+  const b = state.bookings.find(x => x.id === id);
+  if (!b) return;
+  const copy = JSON.parse(JSON.stringify(b));
+  copy.id = Date.now();
+  copy.status = 'Provisional';
+  copy.paymentStatus = 'unpaid';
+  copy.received = 0;
+  state.bookings.push(copy);
+  saveState();
+  renderBookings();
+  updateDashboard();
+  toast('Booking duplicated - edit the date');
+}
+
+// ========================
+// REPORTS
+// ========================
+function toggleReportType() {
+  const type = document.getElementById('rpt-type').value;
+  document.getElementById('rpt-from-group').style.display = type === 'custom' ? '' : 'none';
+  document.getElementById('rpt-to-group').style.display = type === 'custom' ? '' : 'none';
+}
+
+function generateReport() {
+  const type = document.getElementById('rpt-type').value;
+  const now = new Date();
+  let fromDate, toDate, periodLabel;
+  if (type === 'month') {
+    fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    toDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    periodLabel = now.toLocaleString('default', {month:'long', year:'numeric'});
+  } else {
+    const fromVal = document.getElementById('rpt-from').value;
+    const toVal = document.getElementById('rpt-to').value;
+    if (!fromVal || !toVal) { toast('Please select both dates'); return; }
+    const [fy,fm] = fromVal.split('-').map(Number);
+    const [ty,tm] = toVal.split('-').map(Number);
+    fromDate = new Date(fy, fm-1, 1);
+    toDate = new Date(ty, tm, 0);
+    periodLabel = new Date(fy,fm-1).toLocaleString('default',{month:'long',year:'numeric'}) + ' to ' + new Date(ty,tm-1).toLocaleString('default',{month:'long',year:'numeric'});
+  }
+  const fromStr = fromDate.toISOString().split('T')[0];
+  const toStr = toDate.toISOString().split('T')[0];
+  const inRange = state.bookings.filter(b => b.from >= fromStr && b.from <= toStr);
+  const confirmed = inRange.filter(b => b.status === 'Confirmed');
+  const cancelled = inRange.filter(b => b.status === 'Cancelled');
+  const provisional = inRange.filter(b => b.status === 'Provisional' || b.status === 'Quote Sent');
+  const active = inRange.filter(b => b.status !== 'Cancelled');
+  const totalFee = active.reduce((s,b) => s+(b.fee||0), 0);
+  const totalRec = active.reduce((s,b) => s+(b.received||0), 0);
+  const totalDue = Math.max(0, totalFee - totalRec);
+  const dueShows = active.filter(b => (b.paymentStatus === 'unpaid' || b.paymentStatus === 'partial'));
+  const el = document.getElementById('report-output');
+  el.innerHTML = `
+    <div style="padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px">
+      <div style="font-size:18px;font-weight:700">Report: ${periodLabel}</div>
+    </div>
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="stat-card" style="border-left:4px solid var(--success)">
+        <div class="stat-num" style="color:var(--success)">${confirmed.length}</div>
+        <div class="stat-label">Shows Done</div>
+      </div>
+      <div class="stat-card" style="border-left:4px solid var(--danger)">
+        <div class="stat-num" style="color:var(--danger)">${cancelled.length}</div>
+        <div class="stat-label">Cancelled</div>
+      </div>
+      <div class="stat-card" style="border-left:4px solid var(--warning)">
+        <div class="stat-num" style="color:var(--warning)">${provisional.length}</div>
+        <div class="stat-label">Provisional</div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="stat-card" style="border-left:4px solid #333">
+        <div class="stat-num">£${totalFee.toFixed(2)}</div>
+        <div class="stat-label">Total Agreed</div>
+      </div>
+      <div class="stat-card" style="border-left:4px solid var(--success)">
+        <div class="stat-num" style="color:var(--success)">£${totalRec.toFixed(2)}</div>
+        <div class="stat-label">Received</div>
+      </div>
+    </div>
+    ${totalDue > 0 ? `<div style="background:#fff3f3;border:2px solid var(--danger);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div><div style="font-weight:700;color:var(--danger)">Outstanding Balance</div>
+      <div style="font-size:12px;color:var(--text2)">${dueShows.length} show${dueShows.length!==1?'s':''} with payments due</div></div>
+      <div style="font-size:26px;font-weight:700;color:var(--danger)">£${totalDue.toFixed(2)}</div>
+    </div>` : `<div style="background:#f0fff6;border:2px solid var(--success);border-radius:var(--radius);padding:14px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--success)">All Clear - No outstanding payments</div>
+    </div>`}
+    ${dueShows.length > 0 ? `<div class="card" style="margin-bottom:16px">
+      <div class="card-title">Payments Still Due</div>
+      ${dueShows.map(b => {
+        const owing = Math.max(0,(b.fee||0)-(b.received||0));
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px"><div><div style="font-weight:600">'+( b.event||b.client)+'</div><div style="font-size:12px;color:var(--text2)">'+b.client+' - '+b.from+'</div></div><div style="font-weight:700;color:var(--danger)">£'+owing.toFixed(2)+'</div></div>';
+      }).join('')}
+    </div>` : ''}
+    <div class="card">
+      <div class="card-title">All Shows (${inRange.length})</div>
+      ${inRange.sort((a,b)=>a.from.localeCompare(b.from)).map(b => {
+        const sc = {Confirmed:'badge-green',Provisional:'badge-yellow','Quote Sent':'badge-blue',Cancelled:'badge-red'}[b.status]||'badge-blue';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap"><div style="flex:1"><div style="font-weight:600">'+( b.event||b.client)+'</div><div style="font-size:12px;color:var(--text2)">'+b.from+' - '+(b.venue||'No venue')+'</div></div><span class="badge '+sc+'">'+b.status+'</span>'+( b.fee?'<span style="font-family:var(--mono);font-size:12px">£'+(b.fee||0).toFixed(2)+'</span>':'')+'</div>';
+      }).join('')}
+    </div>
+    <div style="margin-top:14px;text-align:right">
+      <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+    </div>`;
+}
+
+// ========================
+// CLIENTS
+// ========================
+function renderClients() {
+  if (!state.clients) state.clients = [];
+  const el = document.getElementById('clients-list');
+  if (!el) return;
+  if (!state.clients.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div>No clients yet.</div>';
+    return;
+  }
+  el.innerHTML = state.clients.map(cl => `
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="flex:1">
+          <div style="font-weight:700">${cl.name}</div>
+          <div style="font-size:12px;color:var(--text2)">${cl.contact||''} ${cl.phone?'· '+cl.phone:''} ${cl.email?'· '+cl.email:''}</div>
+        </div>
+        ${cl.phone ? `<a href="https://wa.me/${cl.phone.replace(/[^0-9]/g,'')}" target="_blank" class="btn btn-secondary btn-sm">WhatsApp</a>
+        <a href="tel:${cl.phone}" class="btn btn-secondary btn-sm">Call</a>` : ''}
+        ${cl.email ? `<a href="mailto:${cl.email}" class="btn btn-secondary btn-sm">Email</a>` : ''}
+        <button class="btn btn-danger btn-sm" onclick="deleteClient(${cl.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addClient() {
+  const name = document.getElementById('cl-name').value.trim();
+  if (!name) { toast('Enter client name'); return; }
+  if (!state.clients) state.clients = [];
+  state.clients.push({
+    id: Date.now(), name,
+    contact: document.getElementById('cl-contact').value.trim(),
+    phone: document.getElementById('cl-phone').value.trim(),
+    email: document.getElementById('cl-email').value.trim(),
+    notes: document.getElementById('cl-notes').value.trim()
+  });
+  saveState();
+  closeModal('modal-add-client');
+  renderClients();
+  toast('Client saved');
+  ['cl-name','cl-contact','cl-phone','cl-email','cl-notes'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+}
+
+function deleteClient(id) {
+  if (!confirm('Delete this client?')) return;
+  state.clients = state.clients.filter(x => x.id !== id);
+  saveState(); renderClients(); toast('Deleted');
+}
+
+// ========================
+// CREW AVAILABILITY
+// ========================
+function checkCrewAvail() {
+  const date = document.getElementById('avail-date').value;
+  if (!date) { toast('Pick a date first'); return; }
+  const el = document.getElementById('crew-avail-output');
+  const available = [], busy = [];
+  state.technicians.forEach(t => {
+    const isBooked = state.bookings.some(b => b.technicians && b.technicians.includes(t.id) && dateInRange(date, b.from, b.to) && b.status !== 'Cancelled');
+    const isUnavail = t.booked && t.booked.includes('unavailable');
+    if (isBooked || isUnavail) {
+      const bk = state.bookings.find(b => b.technicians && b.technicians.includes(t.id) && dateInRange(date, b.from, b.to));
+      busy.push({t, bk});
+    } else available.push(t);
+  });
+  el.innerHTML = `<div class="grid2">
+    <div class="card">
+      <div class="card-title" style="color:var(--success)">Available (${available.length})</div>
+      ${available.length ? available.map(t => '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">'+t.name+'</div><div style="font-size:12px;color:var(--text2)">'+t.role+' - £'+t.rate+'/day</div></div>').join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">No one available.</div>'}
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--danger)">Busy (${busy.length})</div>
+      ${busy.length ? busy.map(({t,bk}) => '<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">'+t.name+'</div>'+(bk?'<div style="font-size:12px;color:var(--danger)">'+(bk.event||bk.client)+' - '+(bk.venue||'')+'</div>':'<div style="font-size:11px;color:var(--text3)">Marked unavailable</div>')+'</div>').join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">Everyone is free!</div>'}
+    </div>
+  </div>`;
+}
+
+// ========================
 // INIT
 // ========================
 loadState();
@@ -2568,7 +3011,7 @@ renderInvoices();
 document.getElementById('modal-add-booking').addEventListener('click', function(e) {
   if (e.target === this) closeModal('modal-add-booking');
 });
-['modal-add-item','modal-add-tech','modal-edit-tech','modal-view-booking','modal-invoice-edit','modal-edit-booking'].forEach(id => {
+['modal-add-item','modal-add-tech','modal-edit-tech','modal-view-booking','modal-invoice-edit','modal-edit-booking','modal-add-client'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
     if (e.target === this) closeModal(id);
   });
